@@ -1,0 +1,25 @@
+{
+  "name": "kakeibo",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "schema": "node src/graphql/schema.js"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.0.0-beta.50",
+    "faunadb": "^2.14.1",
+    "graphql": "^15.0.0",
+    "next": "^9.4.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "sass": "^1.26.7",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0"
+  }
+}
