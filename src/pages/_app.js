@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import Head from 'next/head'
+import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ApolloProvider } from '@apollo/client'
 import client from 'src/graphql/client'
+import theme from 'src/styles/theme'
 
 function App ({ Component, pageProps }) {
   useEffect(() => {
@@ -19,8 +21,10 @@ function App ({ Component, pageProps }) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ApolloProvider client={client}>
-        <CssBaseline />
-        <Component {...pageProps} />
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
       </ApolloProvider>
     </>
   )
