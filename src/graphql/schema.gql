@@ -1,0 +1,19 @@
+type Transaction {
+  category: Category @relation
+  date: Date!
+  id: ID!
+  month: String!
+  note: String
+  price: Int!
+}
+
+type Category {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  getCategories: [Category!]!
+  getTransactions: [Transaction!]!
+  getTransactionsByMonth(month: String!): [Transaction!]!
+}

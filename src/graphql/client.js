@@ -5,7 +5,7 @@ const client = new ApolloClient({
     uri: 'https://graphql.fauna.com/graphql',
     headers: {
       // FIXME: handle correctly
-      authorization: 'Bearer fnADn728c_ACCmCPuRmFpjA7JeYeojZcLOvuGicv',
+      authorization: 'Bearer fnADtUFCgqACDGkq9SysTIdCXL3xW9D1PH6HW11t',
       'X-Schema-Preview': 'partial-update-mutation'
     },
     fetch
