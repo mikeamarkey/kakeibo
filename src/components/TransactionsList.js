@@ -3,6 +3,9 @@ import moment from 'moment'
 import { Price } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    overflowY: 'auto'
+  },
   card: {
     margin: theme.spacing(1),
     padding: theme.spacing(1)
@@ -35,7 +38,7 @@ const TransactionsList = ({ transactions }) => {
   const css = useStyles()
 
   return (
-    <div>
+    <div className={css.root}>
       {transactions.slice().sort(sortTransactions).map((transaction) => (
         <Paper key={transaction.id} variant='outlined' className={css.card}>
           <div className={css.content}>
