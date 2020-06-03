@@ -7,12 +7,18 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     padding: theme.spacing(1)
   },
-  top: {
+  content: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'start'
   },
-  note: {
+  left: {
+    textAlign: 'left'
+  },
+  right: {
+    textAlign: 'right'
+  },
+  small: {
     color: theme.palette.text.secondary
   }
 }))
@@ -32,15 +38,23 @@ const TransactionsList = ({ transactions }) => {
     <div>
       {transactions.slice().sort(sortTransactions).map((transaction) => (
         <Paper key={transaction.id} variant='outlined' className={css.card}>
-          <div className={css.top}>
-            <Typography>{moment(transaction.date).format('M/D')}</Typography>
-            <Typography>
-              <Price price={transaction.price} />
-            </Typography>
+          <div className={css.content}>
+            <div>
+              {transaction.category && (
+                <Typography>{transaction.category.name}</Typography>
+              )}
+              {transaction.note.length > 0 && (
+                <Typography className={css.small} variant='caption'>{transaction.note}</Typography>
+              )}
+            </div>
+
+            <div className={css.right}>
+              <Typography>
+                <Price price={transaction.price}></Price>
+              </Typography>
+              <Typography className={css.small}>{moment(transaction.date).format('M/D')}</Typography>
+            </div>
           </div>
-          {transaction.note.length > 0 && (
-            <Typography className={css.note} variant='caption'>{transaction.note}</Typography>
-          )}
         </Paper>
       ))}
     </div>

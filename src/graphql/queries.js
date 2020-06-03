@@ -22,6 +22,10 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
       data {
         _id
         _ts
+        category {
+          _id
+          name
+        }
         date
         id
         month
@@ -38,7 +42,6 @@ export const GET_CATEGORIES = gql`
       data {
         _id
         _ts
-        id
         name
       }
     }

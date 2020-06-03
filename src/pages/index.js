@@ -1,32 +1,45 @@
 import { useState } from 'react'
 import { withRouter } from 'next/router'
 import { useQuery, useMutation } from '@apollo/client'
-import { Container } from '@material-ui/core'
+import { Container, makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
-import { Fab, Header, TransactionsList } from 'src/components'
+import { Footer, Fab, Header, TransactionsList } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: 'auto 1fr auto',
+    height: '100vh'
+  },
+  list: {
+    overflowY: 'scroll'
+  }
+}))
 
 const Index = ({ router }) => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
   const { loading, error, data, refetch } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
+  const css = useStyles()
 
   if (error) {
     return <div>{error.message}</div>
   }
 
   return (
-    <Container disableGutters={true} maxWidth='sm'>
+    <div className={css.root}>
       <Header month={month} setMonth={setMonth} refetchTransactions={refetch} />
-
-      {!loading && (
-        <TransactionsList transactions={data.getTransactionsByMonth.data} />
+      {loading ? (
+        <div>loading...</div>
+      ) : (
+        <TransactionsList className={css.list} transactions={data.getTransactionsByMonth.data} />
       )}
-
-      <Fab month={month} refetchTransactions={refetch} />
-    </Container>
+      <Footer month={month} refetchTransactions={refetch} />
+    </div>
   )
 }
 
