@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { withRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
-import { Footer, Header, TransactionsList } from 'src/components'
-import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+import { Footer, Header, TransactionDialog, TransactionsList } from 'src/components'
+import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,26 +20,45 @@ const useStyles = makeStyles((theme) => ({
 
 const Index = ({ router }) => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
-  const { loading, error, data, refetch } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
+  const [dialogContent, setDialogContent] = useState(null)
+  const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
+  const { data: dataC, loading: loadingC } = useQuery(GET_CATEGORIES)
   const css = useStyles()
-
-  if (error) {
-    return <div>{error.message}</div>
-  }
 
   return (
     <div className={css.root}>
-      <Header month={month} setMonth={setMonth} refetchTransactions={refetch} />
-      {loading ? (
+      <Header
+        month={month}
+        setMonth={setMonth}
+        refetchTransactions={refetchT}
+      />
+
+      {loadingT ? (
         <div>loading...</div>
       ) : (
-        <TransactionsList className={css.list} transactions={data.getTransactionsByMonth.data} />
+        <TransactionsList className={css.list} transactions={dataT.getTransactionsByMonth.data} />
       )}
-      <Footer month={month} refetchTransactions={refetch} />
+
+      {!loadingC && (
+        <Footer
+          month={month}
+          categories={dataC.getCategories.data}
+          setDialogContent={setDialogContent}
+        />
+      )}
+
+      {dialogContent && (
+        <TransactionDialog
+          categories={dataC.getCategories.data}
+          dialogContent={dialogContent}
+          refetchTransactions={refetchT}
+          setDialogContent={setDialogContent}
+        />
+      )}
     </div>
   )
 }
 
-export default withRouter(Index)
+export default Index
