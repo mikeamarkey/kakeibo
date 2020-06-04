@@ -14,11 +14,14 @@ import {
   makeStyles
 } from '@material-ui/core'
 
-import { CREATE_TRANSACTION } from 'src/graphql/queries'
+import { CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   select: {
     width: '100%'
+  },
+  flexSpacer: {
+    flexGrow: 1
   }
 }))
 
@@ -29,18 +32,38 @@ const TransactionDialog = ({
   setDialogContent
 }) => {
   const [form, setForm] = useState(dialogContent)
-  const [createTransaction] = useMutation(CREATE_TRANSACTION, {
-    onCompleted: () => refetchTransactions()
-  })
+  const [createTransaction] = useMutation(CREATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
+  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, { onCompleted: () => refetchTransactions() })
   const css = useStyles()
+  const disabled = !form.category || !Number.isInteger(form.price) || !form.date.length
 
-  function handleClose (data) {
-    if (data) {
-      const { category, ...formData } = data
-      createTransaction({
-        variables: { data: { ...formData, category: { connect: category } } }
-      })
-    }
+  function handleCreate () {
+    createTransaction({
+      variables: {
+        data: { ...form, category: { connect: form.category } }
+      }
+    })
+    handleClose()
+  }
+
+  function handleUpdate () {
+    const { date, price, note, category } = form
+    updateTransaction({
+      variables: {
+        id: form._id,
+        data: { date, price, note, category: { connect: category } }
+      }
+    })
+    handleClose()
+  }
+
+  function handleDelete () {
+    deleteTransaction({ variables: { id: form._id } })
+    handleClose()
+  }
+
+  function handleClose () {
     setDialogContent(null)
   }
 
@@ -117,13 +140,21 @@ const TransactionDialog = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button color='primary' onClick={() => handleClose()}>
+        {form._id && (
+          <>
+            <Button color='secondary' onClick={() => handleDelete()}>Delete</Button>
+            <div className={css.flexSpacer} />
+          </>
+        )}
+        <Button onClick={() => handleClose()}>
           Cancel
         </Button>
         <Button
           color='primary'
-          disabled={!form.category || !Number.isInteger(form.price) || !form.date.length}
-          onClick={() => handleClose(form)}
+          disabled={disabled}
+          onClick={form._id
+            ? () => handleUpdate()
+            : () => handleCreate()}
         >
           OK
         </Button>

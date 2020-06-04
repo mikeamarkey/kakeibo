@@ -38,7 +38,11 @@ const Index = ({ router }) => {
       {loadingT ? (
         <div>loading...</div>
       ) : (
-        <TransactionsList className={css.list} transactions={dataT.getTransactionsByMonth.data} />
+        <TransactionsList
+          className={css.list}
+          transactions={dataT.getTransactionsByMonth.data}
+          setDialogContent={setDialogContent}
+        />
       )}
 
       {!loadingC && (

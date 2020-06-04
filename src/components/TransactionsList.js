@@ -28,19 +28,26 @@ const useStyles = makeStyles((theme) => ({
 
 const sortTransactions = (a, b) => {
   if (moment(a.date).isBefore(moment(b.date))) {
-    return -1
-  } else {
     return 1
+  } else {
+    return -1
   }
 }
 
-const TransactionsList = ({ transactions }) => {
+const TransactionsList = ({ transactions, setDialogContent }) => {
   const css = useStyles()
 
   return (
     <div className={css.root}>
       {transactions.slice().sort(sortTransactions).map((transaction) => (
-        <Paper key={transaction.id} variant='outlined' className={css.card}>
+        <Paper
+          key={transaction.id}
+          variant='outlined'
+          className={css.card}
+          onClick={() => {
+            setDialogContent({ ...transaction, category: transaction.category._id })
+          }}
+        >
           <div className={css.content}>
             <div>
               {transaction.category && (
