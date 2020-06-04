@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
     gridTemplateRows: 'auto 1fr auto',
-    height: '100vh'
+    height: '100%'
   },
   list: {
     overflowY: 'scroll'
