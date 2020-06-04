@@ -53,7 +53,7 @@ const TransactionsList = ({ transactions }) => {
 
             <div className={css.right}>
               <Typography>
-                <Price price={transaction.price}></Price>
+                <Price price={transaction.price} />
               </Typography>
               <Typography className={css.small}>{moment(transaction.date).format('M/D')}</Typography>
             </div>
