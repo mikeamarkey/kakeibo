@@ -6,15 +6,12 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  Fab as MuiFab,
   FormControl,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Toolbar,
   makeStyles
 } from '@material-ui/core'
 import moment from 'moment'
@@ -29,39 +26,23 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'auto'
   },
   chip: {
-    margin: theme.spacing(.5)
+    margin: theme.spacing(0.5)
   },
   select: {
     width: '100%'
   }
 }))
 
-const categories = [
-  {id: 1, name: '食事代'},
-  {id: 2, name: '生活必需品'},
-  {id: 3, name: 'ガソリン'},
-  {id: 4, name: 'デート代'},
-  {id: 5, name: '旅行'},
-  {id: 6, name: 'サロン'},
-  {id: 7, name: '必要衣類'},
-  {id: 8, name: '自動車関連'},
-  {id: 9, name: '仕事関連'},
-  {id: 10, name: '勉強関連'},
-  {id: 11, name: '治療費'},
-  {id: 12, name: '歯医者代'},
-  {id: 13, name: 'その他'}
-]
-
 const Footer = ({ month, refetchTransactions }) => {
   const [form, setForm] = useState(defaultForm())
   const [open, setOpen] = useState(false)
-  const { loading, error, data } = useQuery(GET_CATEGORIES)
+  const { data } = useQuery(GET_CATEGORIES)
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     onCompleted: () => refetchTransactions()
   })
   const css = useStyles()
 
-  function defaultForm() {
+  function defaultForm () {
     return {
       date: moment().isSame(moment(month), 'month') ? moment().format('YYYY-MM-DD') : moment(month).format('YYYY-MM-DD'),
       id: uuidv4(),
@@ -108,15 +89,15 @@ const Footer = ({ month, refetchTransactions }) => {
       <Dialog
         open={open}
         onClose={() => handleClose()}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby='form-dialog-title'
         transitionDuration={100}
       >
         <DialogContent>
-          <FormControl className={css.select} required={true}>
-            <InputLabel id="category-label">Category</InputLabel>
+          <FormControl className={css.select} required>
+            <InputLabel id='category-label'>Category</InputLabel>
             <Select
-              labelId="category-label"
-              id="category"
+              labelId='category-label'
+              id='category'
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             >
@@ -137,19 +118,19 @@ const Footer = ({ month, refetchTransactions }) => {
               shrink: true
             }}
             value={form.date}
-            onChange={(e) => setForm({...form, date: e.target.value})}
+            onChange={(e) => setForm({ ...form, date: e.target.value })}
           />
 
           <TextField
-            id="price"
-            type="number"
-            label="Price"
+            id='price'
+            type='number'
+            label='Price'
             placeholder='1000'
             margin='dense'
             fullWidth
             required
             InputProps={{
-              startAdornment: <InputAdornment position="start">¥</InputAdornment>
+              startAdornment: <InputAdornment position='start'>¥</InputAdornment>
             }}
             InputLabelProps={{
               shrink: true
@@ -160,14 +141,14 @@ const Footer = ({ month, refetchTransactions }) => {
               if (e.target.value.length) {
                 value = parseInt(e.target.value, 10)
               }
-              setForm({ ...form, price: value})
+              setForm({ ...form, price: value })
             }}
           />
           <TextField
-            id="note"
-            type="text"
-            label="Note"
-            margin="dense"
+            id='note'
+            type='text'
+            label='Note'
+            margin='dense'
             fullWidth
             InputLabelProps={{
               shrink: true
@@ -183,7 +164,8 @@ const Footer = ({ month, refetchTransactions }) => {
           <Button
             color='primary'
             disabled={!form.category || !Number.isInteger(form.price) || !form.date.length}
-            onClick={() => handleClose(form)}>
+            onClick={() => handleClose(form)}
+          >
             OK
           </Button>
         </DialogActions>

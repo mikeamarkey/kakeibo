@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { withRouter } from 'next/router'
-import { useQuery, useMutation } from '@apollo/client'
-import { Container, makeStyles } from '@material-ui/core'
+import { useQuery } from '@apollo/client'
+import { makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
-import { Footer, Fab, Header, TransactionsList } from 'src/components'
+import { Footer, Header, TransactionsList } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({

@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 require('dotenv').config()
 
 const updateSchema = async () => {
-  const [,,override] = process.argv
+  const [,, override] = process.argv
   const url = `https://graphql.fauna.com/import${override === 'override' ? '?mode=override' : ''}`
   const options = {
     method: 'POST',
@@ -18,7 +18,7 @@ const updateSchema = async () => {
   if (override) {
     console.log('Using override mode')
   }
-  console.log(`Starting update...`)
+  console.log('Starting update...')
   if (res.status === 200) {
     console.log(await res.text())
     console.log('Updated successfully!')
