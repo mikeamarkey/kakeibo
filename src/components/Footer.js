@@ -22,7 +22,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { GET_CATEGORIES, CREATE_TRANSACTION } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  footer: {
+    display: 'flex',
     padding: theme.spacing(1),
     background: theme.palette.primary.main,
     overflowX: 'auto'
@@ -89,7 +90,7 @@ const Footer = ({ month, refetchTransactions }) => {
 
   return (
     <>
-      <Toolbar className={css.root}>
+      <div className={css.footer}>
         {categories.map((category) => (
           <Chip
             key={category._id}
@@ -102,7 +103,7 @@ const Footer = ({ month, refetchTransactions }) => {
             }}
           />
         ))}
-      </Toolbar>
+      </div>
 
       <Dialog
         open={open}
