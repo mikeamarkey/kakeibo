@@ -1,6 +1,8 @@
 import { AppBar, IconButton, Toolbar, Typography, makeStyles } from '@material-ui/core'
-import { ArrowBack, ArrowForward } from '@material-ui/icons'
+import { ArrowBack, ArrowForward, Menu } from '@material-ui/icons'
 import moment from 'moment'
+
+import { Price } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
   center: {
@@ -12,10 +14,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Header = ({ month, setMonth, refetchTransactions }) => {
+const Header = ({ month, setMonth, transactions, refetchTransactions }) => {
   const css = useStyles()
   const previousMonth = moment(month).subtract(1, 'M').format('YYYYMM')
   const nextMonth = moment(month).add(1, 'M').format('YYYYMM')
+  const total = transactions.reduce((acc, item) => acc + item.price, 0)
 
   function onMonthChange (newMonth) {
     setMonth(newMonth)
@@ -28,20 +31,25 @@ const Header = ({ month, setMonth, refetchTransactions }) => {
         <IconButton
           edge='start'
           color='inherit'
+          aria-label='open menu'
+        >
+          <Menu />
+        </IconButton>
+
+        <Typography variant='h6'>Kakeibo</Typography>
+
+        <Typography variant='h6' className={css.center}>
+          {moment(month).format('YYYY/MM')} (<Price price={total} />)
+        </Typography>
+
+        <IconButton
+          edge='start'
+          color='inherit'
           aria-label='previous month'
           onClick={() => onMonthChange(previousMonth)}
         >
           <ArrowBack />
         </IconButton>
-
-        <div className={css.center}>
-          <Typography variant='h6'>
-            Kakeibo
-          </Typography>
-          <Typography className={css.month} variant='caption'>
-            {moment(month).format('YYYY/MM')}
-          </Typography>
-        </div>
 
         <IconButton
           edge='end'

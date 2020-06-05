@@ -1,6 +1,6 @@
-import Footer from './Footer'
-import Header from './Header'
-import Price from './Price'
-import TransactionsList from './TransactionsList'
-
-export { Footer, Header, Price, TransactionsList }
+export { default as Footer } from './Footer'
+export { default as Header } from './Header'
+export { default as Price } from './Price'
+export { default as Transaction } from './Transaction'
+export { default as TransactionDialog } from './TransactionDialog'
+export { default as TransactionsList } from './TransactionsList'

@@ -56,6 +56,14 @@ export const CREATE_TRANSACTION = gql`
   }
 `
 
+export const UPDATE_TRANSACTION = gql`
+  mutation partialUpdateTransaction($id: ID!, $data: PartialUpdateTransactionInput!) {
+    updateTransaction: partialUpdateTransaction(id: $id, data: $data) {
+      _id
+    }
+  }
+`
+
 export const DELETE_TRANSACTION = gql`
   mutation deleteTransaction($id: ID!) {
     deleteTransaction(id: $id) {
