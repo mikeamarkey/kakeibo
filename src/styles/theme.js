@@ -1,8 +1,8 @@
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 // adapted from https://material-ui.com global theme object
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   breakpoints: {
     keys: [
       'xs',
@@ -283,4 +283,5 @@ const theme = createMuiTheme({
   }
 })
 
+theme = responsiveFontSizes(theme)
 export default theme
