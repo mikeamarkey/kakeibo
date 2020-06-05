@@ -1,64 +1,73 @@
 import { Paper, Typography, makeStyles } from '@material-ui/core'
 import moment from 'moment'
-import { Price } from 'src/components'
+import { Price, Transaction } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    overflowY: 'auto'
+    overflowY: 'auto',
+    paddingBottom: theme.spacing(10)
   },
-  card: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(1)
+  group: {
+    margin: `${theme.spacing(2)}px auto`,
+    maxWidth: theme.breakpoints.values.sm
   },
-  content: {
+  subheader: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'start'
+    alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
+    padding: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white
   },
-  left: {
-    textAlign: 'left'
-  },
-  right: {
-    textAlign: 'right'
-  },
-  small: {
-    color: theme.palette.text.secondary
+  subheaderText: {
+    fontWeight: theme.typography.fontWeightBold
   }
 }))
 
-const sortTransactions = (a, b) => {
-  if (moment(a.date).isBefore(moment(b.date))) {
-    return -1
-  } else {
-    return 1
-  }
-}
+const sortTransactions = (a, b) => b._ts - a._ts
+const sortTransactionGroups = (a, b) => moment(b).diff(a)
 
-const TransactionsList = ({ transactions }) => {
+const TransactionsList = ({ month, transactions, setDialogContent }) => {
   const css = useStyles()
+  const transactionGroups = transactions.reduce((acc, item) => {
+    if (!acc.groups[item.date]) {
+      acc.groups[item.date] = {
+        total: item.price,
+        transactions: [item]
+      }
+    } else {
+      acc.groups[item.date].total += item.price
+      acc.groups[item.date].transactions.push(item)
+    }
+    acc.total += item.price
+    return acc
+  }, { total: 0, groups: {} })
 
   return (
     <div className={css.root}>
-      {transactions.slice().sort(sortTransactions).map((transaction) => (
-        <Paper key={transaction.id} variant='outlined' className={css.card}>
-          <div className={css.content}>
-            <div>
-              {transaction.category && (
-                <Typography>{transaction.category.name}</Typography>
-              )}
-              {transaction.note.length > 0 && (
-                <Typography className={css.small} variant='caption'>{transaction.note}</Typography>
-              )}
-            </div>
+      {Object.keys(transactionGroups.groups).sort(sortTransactionGroups).map((date) => (
+        <div key={date} className={css.group}>
+          <Paper className={css.subheader} square>
+            <Typography className={css.subheaderText} variant='subtitle1'>
+              {moment(date).format('M/D')}
+            </Typography>
 
-            <div className={css.right}>
-              <Typography>
-                <Price price={transaction.price} />
-              </Typography>
-              <Typography className={css.small}>{moment(transaction.date).format('M/D')}</Typography>
-            </div>
-          </div>
-        </Paper>
+            <Typography className={css.subheaderText} variant='subtitle1'>
+              <Price price={transactionGroups.groups[date].total} />
+            </Typography>
+          </Paper>
+
+          {transactionGroups.groups[date].transactions.sort(sortTransactions).map((transaction) => (
+            <Transaction
+              key={transaction._id}
+              transaction={transaction}
+              onClick={() => {
+                setDialogContent({ ...transaction, category: transaction.category._id })
+              }}
+            />
+          ))}
+        </div>
       ))}
     </div>
   )
