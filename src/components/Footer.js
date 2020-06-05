@@ -10,7 +10,8 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'auto'
   },
   chip: {
-    margin: theme.spacing(0.5)
+    margin: theme.spacing(0.5),
+    backgroundColor: theme.palette.common.white
   }
 }))
 

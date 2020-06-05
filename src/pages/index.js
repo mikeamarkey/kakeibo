@@ -11,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: '1fr',
     gridTemplateRows: 'auto 1fr auto',
-    height: '100%'
+    height: '100%',
+    backgroundColor: theme.palette.background.level2
   },
   list: {
     overflowY: 'scroll'
@@ -30,6 +31,7 @@ const Index = ({ router }) => {
   return (
     <div className={css.root}>
       <Header
+        transactions={loadingT ? [] : dataT.getTransactionsByMonth.data}
         month={month}
         setMonth={setMonth}
         refetchTransactions={refetchT}
@@ -39,6 +41,7 @@ const Index = ({ router }) => {
         <div>loading...</div>
       ) : (
         <TransactionsList
+          month={month}
           className={css.list}
           transactions={dataT.getTransactionsByMonth.data}
           setDialogContent={setDialogContent}
