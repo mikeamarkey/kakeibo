@@ -14,14 +14,12 @@ import {
   makeStyles
 } from '@material-ui/core'
 
+import { FlexSpacer } from 'src/components'
 import { CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   select: {
     width: '100%'
-  },
-  flexSpacer: {
-    flexGrow: 1
   }
 }))
 
@@ -143,7 +141,7 @@ const TransactionDialog = ({
         {form._id && (
           <>
             <Button color='secondary' onClick={() => handleDelete()}>Delete</Button>
-            <div className={css.flexSpacer} />
+            <FlexSpacer />
           </>
         )}
         <Button onClick={() => handleClose()}>

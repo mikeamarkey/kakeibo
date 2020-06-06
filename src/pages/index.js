@@ -1,49 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
-import { Footer, Header, TransactionDialog, TransactionsList } from 'src/components'
+import { IndexAppBar, Footer, Layout, TransactionDialog, TransactionsList } from 'src/components'
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: 'auto 1fr auto',
-    height: '100%',
-    backgroundColor: theme.palette.background.level2
-  },
-  list: {
-    overflowY: 'scroll'
-  }
-}))
-
-const Index = ({ router }) => {
+const Index = () => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
   const [dialogContent, setDialogContent] = useState(null)
   const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
   const { data: dataC, loading: loadingC } = useQuery(GET_CATEGORIES)
-  const css = useStyles()
+  useEffect(() => {
+    refetchT()
+  }, [month])
+
+  const transactions = loadingT ? [] : dataT.getTransactionsByMonth.data
 
   return (
-    <div className={css.root}>
-      <Header
-        transactions={loadingT ? [] : dataT.getTransactionsByMonth.data}
-        month={month}
-        setMonth={setMonth}
-        refetchTransactions={refetchT}
-      />
-
+    <Layout extraComponent={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
       {loadingT ? (
-        <div>loading...</div>
+        <div>Loading...</div>
       ) : (
         <TransactionsList
           month={month}
-          className={css.list}
-          transactions={dataT.getTransactionsByMonth.data}
+          transactions={transactions}
           setDialogContent={setDialogContent}
         />
       )}
@@ -64,7 +46,7 @@ const Index = ({ router }) => {
           setDialogContent={setDialogContent}
         />
       )}
-    </div>
+    </Layout>
   )
 }
 
