@@ -1,11 +1,13 @@
 import { useQuery } from '@apollo/client'
+
+import { Layout } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
 
 const Categories = () => {
   const { loading, data } = useQuery(GET_CATEGORIES)
 
   return (
-    <div>
+    <Layout>
       <p>Categories</p>
 
       {!loading && (
@@ -15,7 +17,7 @@ const Categories = () => {
           ))}
         </div>
       )}
-    </div>
+    </Layout>
   )
 }
 
