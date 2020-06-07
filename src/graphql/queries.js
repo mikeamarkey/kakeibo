@@ -52,6 +52,12 @@ export const CREATE_TRANSACTION = gql`
   mutation createTransaction($data: TransactionInput!) {
     createTransaction(data: $data) {
       _id
+      _ts
+      date
+      id
+      month
+      note
+      price
     }
   }
 `
@@ -60,6 +66,12 @@ export const UPDATE_TRANSACTION = gql`
   mutation partialUpdateTransaction($id: ID!, $data: PartialUpdateTransactionInput!) {
     updateTransaction: partialUpdateTransaction(id: $id, data: $data) {
       _id
+      _ts
+      date
+      id
+      month
+      note
+      price
     }
   }
 `
