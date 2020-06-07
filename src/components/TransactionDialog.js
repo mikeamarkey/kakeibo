@@ -26,13 +26,37 @@ const useStyles = makeStyles((theme) => ({
 const TransactionDialog = ({
   categories,
   dialogContent,
-  refetchTransactions,
-  setDialogContent
+  setTransactions,
+  setDialogContent,
+  transactions
 }) => {
   const [form, setForm] = useState(dialogContent)
-  const [createTransaction] = useMutation(CREATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
-  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, { onCompleted: () => refetchTransactions() })
+  const [createTransaction] = useMutation(CREATE_TRANSACTION, {
+    onCompleted: ({ createTransaction }) => {
+      const newTransactions = transactions.slice().push(createTransaction)
+      setTransactions(newTransactions)
+    }
+  })
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, {
+    onCompleted: ({ updateTransaction }) => {
+      const newTransactions = transactions.map((item) => {
+        if (item._id === updateTransaction._id) {
+          return updateTransaction
+        } else {
+          return item
+        }
+      })
+      setTransactions(newTransactions)
+    }
+  })
+  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
+    onCompleted: ({ deleteTransaction }) => {
+      const newTransactions = transactions.filter((item) => {
+        return item._id !== deleteTransaction._id
+      })
+      setTransactions(newTransactions)
+    }
+  })
   const css = useStyles()
   const disabled = !form.category || !Number.isInteger(form.price) || !form.date.length
 

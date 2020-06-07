@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Layout = ({ children, extraComponent }) => {
+const Layout = ({ children, headerElements }) => {
   const css = useStyles()
   const [open, setOpen] = useState(false)
 
@@ -27,7 +27,7 @@ const Layout = ({ children, extraComponent }) => {
       <div className={css.root}>
         <Header
           setOpen={setOpen}
-          extraComponent={extraComponent}
+          headerElements={headerElements}
         />
 
         {children}

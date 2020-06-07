@@ -1,7 +1,7 @@
 import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core'
 import { Menu } from '@material-ui/icons'
 
-const Header = ({ extraComponent, setOpen }) => {
+const Header = ({ headerElements, setOpen }) => {
   return (
     <AppBar position='static'>
       <Toolbar>
@@ -16,7 +16,7 @@ const Header = ({ extraComponent, setOpen }) => {
 
         <Typography variant='h6'>Kakeibo</Typography>
 
-        {extraComponent}
+        {headerElements}
 
       </Toolbar>
     </AppBar>

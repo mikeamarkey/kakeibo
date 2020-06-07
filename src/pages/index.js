@@ -8,6 +8,7 @@ import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 const Index = () => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
   const [dialogContent, setDialogContent] = useState(null)
+  const [transactions, setTransactions] = useState([])
   const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
@@ -16,10 +17,14 @@ const Index = () => {
     refetchT()
   }, [month])
 
-  const transactions = loadingT ? [] : dataT.getTransactionsByMonth.data
+  useEffect(() => {
+    if (dataT && dataT.getTransactionsByMonth) {
+      setTransactions(dataT.getTransactionsByMonth.data)
+    }
+  }, [dataT])
 
   return (
-    <Layout extraComponent={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
+    <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
       {loadingT ? (
         <div>Loading...</div>
       ) : (
@@ -42,7 +47,8 @@ const Index = () => {
         <TransactionDialog
           categories={dataC.getCategories.data}
           dialogContent={dialogContent}
-          refetchTransactions={refetchT}
+          transactions={transactions}
+          setTransactions={setTransactions}
           setDialogContent={setDialogContent}
         />
       )}
