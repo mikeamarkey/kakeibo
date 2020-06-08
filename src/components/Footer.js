@@ -1,4 +1,5 @@
-import { Chip, makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
+import { Category } from 'src/components'
 import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
@@ -7,10 +8,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     background: theme.palette.primary.main,
     overflowX: 'auto'
-  },
-  chip: {
-    margin: theme.spacing(0.5),
-    backgroundColor: theme.palette.common.white
   }
 }))
 
@@ -19,15 +16,14 @@ const Footer = ({ month, categories, setDialogContent }) => {
 
   return (
     <div className={css.footer}>
-      {categories.map((category) => (
-        <Chip
-          key={category._id}
-          label={category.name}
-          className={css.chip}
+      {categories.map(({ _id, name }) => (
+        <Category
+          key={_id}
+          label={name}
           onClick={() => {
             const date = moment().isSame(moment(month), 'month') ? undefined : month
             setDialogContent({
-              category: category._id,
+              category: _id,
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
               note: '',
