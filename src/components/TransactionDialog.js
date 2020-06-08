@@ -13,9 +13,10 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core'
+import produce from 'immer'
 
 import { FlexSpacer } from 'src/components'
-import { CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
+import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   select: {
@@ -23,38 +24,29 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const TransactionDialog = ({
-  categories,
-  dialogContent,
-  setTransactions,
-  setDialogContent,
-  transactions
-}) => {
+const TransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
-    onCompleted: ({ createTransaction }) => {
-      const newTransactions = transactions.slice().push(createTransaction)
-      setTransactions(newTransactions)
-    }
-  })
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, {
-    onCompleted: ({ updateTransaction }) => {
-      const newTransactions = transactions.map((item) => {
-        if (item._id === updateTransaction._id) {
-          return updateTransaction
-        } else {
-          return item
-        }
+    update (store, { data: { createTransaction } }) {
+      const variables = { month }
+      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+      const data = produce(cache, (draft) => {
+        draft.getTransactionsByMonth.data.push(createTransaction)
       })
-      setTransactions(newTransactions)
+      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
     }
   })
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
-    onCompleted: ({ deleteTransaction }) => {
-      const newTransactions = transactions.filter((item) => {
-        return item._id !== deleteTransaction._id
+    update (store, { data: { deleteTransaction } }) {
+      const variables = { month }
+      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+      const data = produce(cache, (draft) => {
+        draft.getTransactionsByMonth.data = draft.getTransactionsByMonth.data.filter((item) => {
+          return item._id !== deleteTransaction._id
+        })
       })
-      setTransactions(newTransactions)
+      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
     }
   })
   const css = useStyles()

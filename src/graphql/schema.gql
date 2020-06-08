@@ -1,7 +1,6 @@
 type Transaction {
   category: Category @relation
   date: Date!
-  id: ID!
   month: String!
   note: String
   price: Int!

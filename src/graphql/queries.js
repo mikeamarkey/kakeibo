@@ -7,7 +7,6 @@ export const GET_TRANSACTIONS = gql`
         _id
         _ts
         date
-        id
         month
         note
         price
@@ -27,7 +26,6 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
           name
         }
         date
-        id
         month
         note
         price
@@ -54,7 +52,6 @@ export const CREATE_TRANSACTION = gql`
       _id
       _ts
       date
-      id
       month
       note
       price
@@ -68,7 +65,6 @@ export const UPDATE_TRANSACTION = gql`
       _id
       _ts
       date
-      id
       month
       note
       price
