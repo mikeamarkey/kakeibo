@@ -79,3 +79,31 @@ export const DELETE_TRANSACTION = gql`
     }
   }
 `
+
+export const CREATE_CATEGORY = gql`
+  mutation createCategory($data: CategoryInput!) {
+    createCategory(data: $data) {
+      _id
+      _ts
+      name
+    }
+  }
+`
+
+export const UPDATE_CATEGORY = gql`
+  mutation partialUpdateCategory($id: ID!, $data: PartialUpdateCategoryInput!) {
+    updateCategory: partialUpdateCategory(id: $id, data: $data) {
+      _id
+      _ts
+      name
+    }
+  }
+`
+
+export const DELETE_CATEGORY = gql`
+  mutation deleteCategorfy($id: ID!) {
+    deleteCategory(id: $id) {
+      _id
+    }
+  }
+`

@@ -1,3 +1,5 @@
+export { default as Category } from './Category'
+export { default as CategoryDialog } from './CategoryDialog'
 export { default as ContentContainer } from './ContentContainer'
 export { default as FlexSpacer } from './FlexSpacer'
 export { default as Footer } from './Footer'
