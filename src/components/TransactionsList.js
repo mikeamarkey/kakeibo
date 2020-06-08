@@ -1,35 +1,10 @@
-import { Paper, Typography, makeStyles } from '@material-ui/core'
 import moment from 'moment'
-import { Price, Transaction } from 'src/components'
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    overflowY: 'auto',
-    paddingBottom: theme.spacing(10)
-  },
-  group: {
-    margin: `${theme.spacing(2)}px auto`,
-    maxWidth: theme.breakpoints.values.sm
-  },
-  subheader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white
-  },
-  subheaderText: {
-    fontWeight: theme.typography.fontWeightBold
-  }
-}))
+import { Price, Subheader, Transaction } from 'src/components'
 
 const sortTransactions = (a, b) => b._ts - a._ts
 const sortTransactionGroups = (a, b) => moment(b).diff(a)
 
 const TransactionsList = ({ month, transactions, setDialogContent }) => {
-  const css = useStyles()
   const transactionGroups = transactions.reduce((acc, item) => {
     if (!acc.groups[item.date]) {
       acc.groups[item.date] = {
@@ -45,18 +20,13 @@ const TransactionsList = ({ month, transactions, setDialogContent }) => {
   }, { total: 0, groups: {} })
 
   return (
-    <div className={css.root}>
+    <>
       {Object.keys(transactionGroups.groups).sort(sortTransactionGroups).map((date) => (
-        <div key={date} className={css.group}>
-          <Paper className={css.subheader} square>
-            <Typography className={css.subheaderText} variant='subtitle1'>
-              {moment(date).format('M/D')}
-            </Typography>
-
-            <Typography className={css.subheaderText} variant='subtitle1'>
-              <Price price={transactionGroups.groups[date].total} />
-            </Typography>
-          </Paper>
+        <div key={date}>
+          <Subheader>
+            <span>{moment(date).format('M/D')}</span>
+            <Price price={transactionGroups.groups[date].total} />
+          </Subheader>
 
           {transactionGroups.groups[date].transactions.sort(sortTransactions).map((transaction) => (
             <Transaction
@@ -69,7 +39,7 @@ const TransactionsList = ({ month, transactions, setDialogContent }) => {
           ))}
         </div>
       ))}
-    </div>
+    </>
   )
 }
 

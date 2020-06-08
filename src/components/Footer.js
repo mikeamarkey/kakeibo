@@ -1,5 +1,4 @@
 import { Chip, makeStyles } from '@material-ui/core'
-import { v4 as uuidv4 } from 'uuid'
 import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +29,6 @@ const Footer = ({ month, categories, setDialogContent }) => {
             setDialogContent({
               category: category._id,
               date: moment(date).format('YYYY-MM-DD'),
-              id: uuidv4(),
               month: month,
               note: '',
               price: ''

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 
-import { Layout } from 'src/components'
+import { ContentContainer, Layout, Subheader } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
 
 const Categories = () => {
@@ -8,15 +8,17 @@ const Categories = () => {
 
   return (
     <Layout>
-      <p>Categories</p>
+      <ContentContainer>
+        <Subheader>Categories</Subheader>
 
-      {!loading && (
-        <div>
-          {data.getCategories.data.map((item) => (
-            <p key={item._id}>{item.name}</p>
-          ))}
-        </div>
-      )}
+        {!loading && (
+          <div>
+            {data.getCategories.data.map((item) => (
+              <p key={item._id}>{item.name}</p>
+            ))}
+          </div>
+        )}
+      </ContentContainer>
     </Layout>
   )
 }
