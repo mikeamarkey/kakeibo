@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { CircularProgress } from '@material-ui/core'
 import moment from 'moment'
 
 import {
   ContentContainer,
-  IndexAppBar,
   Footer,
+  IndexAppBar,
   Layout,
+  Loading,
   TransactionDialog,
   TransactionsList
 } from 'src/components'
@@ -26,7 +26,7 @@ const Index = () => {
     <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
       <ContentContainer>
         {loadingT ? (
-          <CircularProgress />
+          <Loading />
         ) : (
           <TransactionsList
             month={month}

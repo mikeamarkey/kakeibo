@@ -2,6 +2,7 @@ import { Container, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    position: 'relative',
     overflowY: 'auto'
   },
   container: {
