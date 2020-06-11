@@ -5,13 +5,20 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  TextField
+  TextField,
+  makeStyles
 } from '@material-ui/core'
 import produce from 'immer'
 
 import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_CATEGORIES, CREATE_CATEGORY, UPDATE_CATEGORY, DELETE_CATEGORY } from 'src/graphql/queries'
 import { colorArray } from 'src/styles/color'
+
+const useStyles = makeStyles((theme) => ({
+  dialog: {
+    width: theme.spacing(35)
+  }
+}))
 
 const CategoryDialog = ({ dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
@@ -36,6 +43,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
       store.writeQuery({ query: GET_CATEGORIES, data })
     }
   })
+  const css = useStyles()
   const disabled = !form.name || !form.color
 
   function handleCreate () {
@@ -73,7 +81,9 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
       onClose={() => handleClose()}
       aria-labelledby='form-dialog-title'
       transitionDuration={100}
-      size='sm'
+      PaperProps={{
+        className: css.dialog
+      }}
     >
       <DialogContent>
         <TextField
