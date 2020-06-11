@@ -5,37 +5,39 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  makeStyles
+  TextField
 } from '@material-ui/core'
+import produce from 'immer'
 
-import { CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
+import { CategorySelect, FlexSpacer } from 'src/components'
+import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
-const useStyles = makeStyles((theme) => ({
-  select: {
-    width: '100%'
-  },
-  flexSpacer: {
-    flexGrow: 1
-  }
-}))
-
-const TransactionDialog = ({
-  categories,
-  dialogContent,
-  refetchTransactions,
-  setDialogContent
-}) => {
+const TransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
-  const [createTransaction] = useMutation(CREATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, { onCompleted: () => refetchTransactions() })
-  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, { onCompleted: () => refetchTransactions() })
-  const css = useStyles()
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
+  const [createTransaction] = useMutation(CREATE_TRANSACTION, {
+    update (store, { data: { createTransaction } }) {
+      const variables = { month }
+      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+      const data = produce(cache, (draft) => {
+        draft.getTransactionsByMonth.data.push(createTransaction)
+      })
+      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+    }
+  })
+  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
+    update (store, { data: { deleteTransaction } }) {
+      const variables = { month }
+      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+      const data = produce(cache, (draft) => {
+        draft.getTransactionsByMonth.data = draft.getTransactionsByMonth.data.filter((item) => {
+          return item._id !== deleteTransaction._id
+        })
+      })
+      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+    }
+  })
   const disabled = !form.category || !Number.isInteger(form.price) || !form.date.length
 
   function handleCreate () {
@@ -75,19 +77,14 @@ const TransactionDialog = ({
       transitionDuration={100}
     >
       <DialogContent>
-        <FormControl className={css.select} required>
-          <InputLabel id='category-label'>Category</InputLabel>
-          <Select
-            labelId='category-label'
-            id='category'
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-          >
-            {categories.map(({ _id, name }) => (
-              <MenuItem key={_id} value={_id}>{name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CategorySelect
+          categories={categories}
+          id='category'
+          label='Category'
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+          required
+        />
 
         <TextField
           id='date'
@@ -143,7 +140,7 @@ const TransactionDialog = ({
         {form._id && (
           <>
             <Button color='secondary' onClick={() => handleDelete()}>Delete</Button>
-            <div className={css.flexSpacer} />
+            <FlexSpacer />
           </>
         )}
         <Button onClick={() => handleClose()}>
