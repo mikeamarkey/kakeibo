@@ -5,9 +5,9 @@ import moment from 'moment'
 const useStyles = makeStyles((theme) => ({
   footer: {
     display: 'flex',
+    overflowX: 'auto',
     padding: theme.spacing(1),
-    background: theme.palette.primary.main,
-    overflowX: 'auto'
+    borderTop: `1px solid ${theme.palette.divider}`
   }
 }))
 
@@ -16,14 +16,15 @@ const Footer = ({ month, categories, setDialogContent }) => {
 
   return (
     <div className={css.footer}>
-      {categories.map(({ _id, name }) => (
+      {categories.map((category) => (
         <Category
-          key={_id}
-          label={name}
+          key={category._id}
+          label={category.name}
+          color={category.color}
           onClick={() => {
             const date = moment().isSame(moment(month), 'month') ? undefined : month
             setDialogContent({
-              category: _id,
+              category: category._id,
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
               note: '',

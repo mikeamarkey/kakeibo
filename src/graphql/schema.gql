@@ -8,6 +8,7 @@ type Transaction {
 
 type Category {
   name: String!
+  color: String!
 }
 
 type Query {

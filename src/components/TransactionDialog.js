@@ -5,24 +5,13 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  FormControl,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  makeStyles
+  TextField
 } from '@material-ui/core'
 import produce from 'immer'
 
-import { FlexSpacer } from 'src/components'
+import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
-
-const useStyles = makeStyles((theme) => ({
-  select: {
-    width: '100%'
-  }
-}))
 
 const TransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
@@ -49,7 +38,6 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
     }
   })
-  const css = useStyles()
   const disabled = !form.category || !Number.isInteger(form.price) || !form.date.length
 
   function handleCreate () {
@@ -89,19 +77,14 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       transitionDuration={100}
     >
       <DialogContent>
-        <FormControl className={css.select} required>
-          <InputLabel id='category-label'>Category</InputLabel>
-          <Select
-            labelId='category-label'
-            id='category'
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-          >
-            {categories.map(({ _id, name }) => (
-              <MenuItem key={_id} value={_id}>{name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CategorySelect
+          categories={categories}
+          id='category'
+          label='カテゴリ'
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+          required
+        />
 
         <TextField
           id='date'

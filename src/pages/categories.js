@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { makeStyles } from '@material-ui/core'
 
 import {
   Category,
@@ -11,18 +10,11 @@ import {
   Subheader
 } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
-
-const useStyles = makeStyles((theme) => ({
-  list: {
-    display: 'flex',
-    flexDirection: 'column'
-  }
-}))
+import { getUnusedColor } from 'src/styles/color'
 
 const Categories = () => {
   const [dialogContent, setDialogContent] = useState(null)
   const { loading, data } = useQuery(GET_CATEGORIES)
-  const css = useStyles()
 
   const categories = data ? data.getCategories.data : []
 
@@ -34,12 +26,13 @@ const Categories = () => {
         {loading ? (
           <Loading />
         ) : (
-          <div className={css.list}>
+          <div>
             <Category
               label='Add New Category'
               onClick={() => {
                 setDialogContent({
-                  name: ''
+                  name: '',
+                  color: getUnusedColor(categories.map(category => category.color))
                 })
               }}
             />
@@ -48,6 +41,7 @@ const Categories = () => {
               <Category
                 key={category._id}
                 label={category.name}
+                color={category.color}
                 onClick={() => {
                   setDialogContent({ ...category })
                 }}
