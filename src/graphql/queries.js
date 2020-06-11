@@ -24,6 +24,7 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
         category {
           _id
           name
+          color
         }
         date
         month
@@ -41,6 +42,7 @@ export const GET_CATEGORIES = gql`
         _id
         _ts
         name
+        color
       }
     }
   }
@@ -68,6 +70,11 @@ export const UPDATE_TRANSACTION = gql`
       month
       note
       price
+      category {
+        _id
+        name
+        color
+      }
     }
   }
 `
@@ -86,6 +93,7 @@ export const CREATE_CATEGORY = gql`
       _id
       _ts
       name
+      color
     }
   }
 `
@@ -96,6 +104,7 @@ export const UPDATE_CATEGORY = gql`
       _id
       _ts
       name
+      color
     }
   }
 `

@@ -9,8 +9,9 @@ import {
 } from '@material-ui/core'
 import produce from 'immer'
 
-import { FlexSpacer } from 'src/components'
+import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_CATEGORIES, CREATE_CATEGORY, UPDATE_CATEGORY, DELETE_CATEGORY } from 'src/graphql/queries'
+import { colorArray } from 'src/styles/color'
 
 const CategoryDialog = ({ dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
@@ -35,7 +36,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
       store.writeQuery({ query: GET_CATEGORIES, data })
     }
   })
-  const disabled = !form.name
+  const disabled = !form.name || !form.color
 
   function handleCreate () {
     createCategory({
@@ -47,11 +48,11 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
   }
 
   function handleUpdate () {
-    const { name } = form
+    const { name, color } = form
     updateCategory({
       variables: {
         id: form._id,
-        data: { name }
+        data: { name, color }
       }
     })
     handleClose()
@@ -72,6 +73,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
       onClose={() => handleClose()}
       aria-labelledby='form-dialog-title'
       transitionDuration={100}
+      size='sm'
     >
       <DialogContent>
         <TextField
@@ -85,6 +87,18 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
           }}
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
+
+        <CategorySelect
+          categories={colorArray.map(color => {
+            return { color }
+          })}
+          id='color'
+          label='Color'
+          name={form.name ? form.name : 'カテゴリ'}
+          value={form.color}
+          onChange={(e) => setForm({ ...form, color: e.target.value })}
+          required
         />
       </DialogContent>
       <DialogActions>
