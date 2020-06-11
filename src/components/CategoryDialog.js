@@ -99,6 +99,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
           value={form.color}
           onChange={(e) => setForm({ ...form, color: e.target.value })}
           required
+          trackBy='color'
         />
       </DialogContent>
       <DialogActions>
