@@ -95,7 +95,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
           })}
           id='color'
           label='Color'
-          name={form.name ? form.name : 'カテゴリ'}
+          name={form.name ? form.name : 'Category'}
           value={form.color}
           onChange={(e) => setForm({ ...form, color: e.target.value })}
           required
