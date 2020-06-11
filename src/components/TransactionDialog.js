@@ -80,7 +80,7 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
         <CategorySelect
           categories={categories}
           id='category'
-          label='カテゴリ'
+          label='Category'
           value={form.category}
           onChange={(e) => setForm({ ...form, category: e.target.value })}
           required
