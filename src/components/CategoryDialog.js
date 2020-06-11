@@ -11,7 +11,7 @@ import produce from 'immer'
 
 import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_CATEGORIES, CREATE_CATEGORY, UPDATE_CATEGORY, DELETE_CATEGORY } from 'src/graphql/queries'
-import { colorArray } from 'src/styles/colors'
+import { colorArray } from 'src/styles/color'
 
 const CategoryDialog = ({ dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
