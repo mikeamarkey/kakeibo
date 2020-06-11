@@ -1,5 +1,5 @@
 import { Card, CardActionArea, CardContent, Typography, makeStyles } from '@material-ui/core'
-import { Price } from 'src/components'
+import { Category, Price } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
   transaction: {
@@ -12,7 +12,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'start',
     padding: theme.spacing(1)
   },
-  small: {
+  category: {
+    margin: 0,
+    pointerEvents: 'none'
+  },
+  note: {
+    margin: '4px 2px 0',
     color: theme.palette.text.secondary
   }
 }))
@@ -28,10 +33,21 @@ const Transaction = ({ transaction, onClick }) => {
       <CardActionArea>
         <CardContent className={css.content}>
           <div>
-            <Typography variant='body2'>{transaction.category.name}</Typography>
+            <Category
+              className={css.category}
+              size='small'
+              label={transaction.category.name}
+              color={transaction.category.color}
+            />
 
             {transaction.note.length > 0 && (
-              <Typography className={css.small} variant='caption'>{transaction.note}</Typography>
+              <Typography
+                className={css.note}
+                variant='caption'
+                component='div'
+              >
+                {transaction.note}
+              </Typography>
             )}
           </div>
 

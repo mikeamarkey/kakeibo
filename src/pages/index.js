@@ -1,52 +1,40 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
-import { Footer, Header, TransactionDialog, TransactionsList } from 'src/components'
+import {
+  ContentContainer,
+  Footer,
+  IndexAppBar,
+  Layout,
+  Loading,
+  TransactionDialog,
+  TransactionsList
+} from 'src/components'
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: 'auto 1fr auto',
-    height: '100%',
-    backgroundColor: theme.palette.background.level2
-  },
-  list: {
-    overflowY: 'scroll'
-  }
-}))
-
-const Index = ({ router }) => {
+const Index = () => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
   const [dialogContent, setDialogContent] = useState(null)
-  const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
+  const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
   const { data: dataC, loading: loadingC } = useQuery(GET_CATEGORIES)
-  const css = useStyles()
+  const transactions = dataT ? dataT.getTransactionsByMonth.data : []
 
   return (
-    <div className={css.root}>
-      <Header
-        transactions={loadingT ? [] : dataT.getTransactionsByMonth.data}
-        month={month}
-        setMonth={setMonth}
-        refetchTransactions={refetchT}
-      />
-
-      {loadingT ? (
-        <div>loading...</div>
-      ) : (
-        <TransactionsList
-          month={month}
-          className={css.list}
-          transactions={dataT.getTransactionsByMonth.data}
-          setDialogContent={setDialogContent}
-        />
-      )}
+    <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
+      <ContentContainer>
+        {loadingT ? (
+          <Loading />
+        ) : (
+          <TransactionsList
+            month={month}
+            transactions={transactions}
+            setDialogContent={setDialogContent}
+          />
+        )}
+      </ContentContainer>
 
       {!loadingC && (
         <Footer
@@ -60,11 +48,12 @@ const Index = ({ router }) => {
         <TransactionDialog
           categories={dataC.getCategories.data}
           dialogContent={dialogContent}
-          refetchTransactions={refetchT}
+          transactions={transactions}
           setDialogContent={setDialogContent}
+          month={month}
         />
       )}
-    </div>
+    </Layout>
   )
 }
 
