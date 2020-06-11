@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflowX: 'auto',
     padding: theme.spacing(1),
-    borderTop: `1px solid ${theme.palette.divider}`
+    borderTop: `1px solid ${theme.palette.divider}`,
+    background: theme.palette.common.white
   }
 }))
 
