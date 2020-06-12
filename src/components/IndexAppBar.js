@@ -1,13 +1,12 @@
-import { IconButton, Typography } from '@material-ui/core'
+import { IconButton } from '@material-ui/core'
 import { ArrowBack, ArrowForward } from '@material-ui/icons'
 import moment from 'moment'
 
-import { FlexSpacer, Price } from 'src/components'
+import { FlexSpacer } from 'src/components'
 
 const IndexAppBar = ({ month, setMonth, transactions }) => {
   const previousMonth = moment(month).subtract(1, 'M').format('YYYYMM')
   const nextMonth = moment(month).add(1, 'M').format('YYYYMM')
-  const total = transactions.reduce((acc, item) => acc + item.price, 0)
 
   function onMonthChange (newMonth) {
     setMonth(newMonth)
@@ -15,12 +14,6 @@ const IndexAppBar = ({ month, setMonth, transactions }) => {
 
   return (
     <>
-      <FlexSpacer />
-
-      <Typography variant='h6'>
-        {moment(month).format('YYYY/MM')} (<Price price={total} />)
-      </Typography>
-
       <FlexSpacer />
 
       <IconButton

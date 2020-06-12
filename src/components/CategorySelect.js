@@ -1,32 +1,56 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core'
+import { FormControl, InputLabel, MenuItem, Select, makeStyles } from '@material-ui/core'
 import { Category } from 'src/components'
+
+const useStyles = makeStyles((theme) => ({
+  renderValues: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  }
+}))
 
 const CategorySelect = ({
   categories,
-  id,
+  emptyName,
   label,
   name,
-  value,
-  onChange,
-  required = false,
-  trackBy = '_id'
+  size = 'medium',
+  trackBy = '_id',
+  selectProps = {},
+  formControlProps = {},
+  ...props
 }) => {
-  const labelId = `${id}-label`
+  const labelId = `${selectProps.id}-label`
+  const css = useStyles()
   return (
-    <FormControl fullWidth required={required}>
-      <InputLabel id={labelId}>{label}</InputLabel>
+    <FormControl {...formControlProps}>
+      {!label && <InputLabel id={labelId}>{label}</InputLabel>}
       <Select
+        {...selectProps}
         labelId={labelId}
-        id={id}
-        value={value}
-        onChange={onChange}
+        renderValue={selectProps.multiple && ((selected) => (
+          <div className={css.renderValues}>
+            {selected.length <= 0 ? (
+              <Category size={size} label={emptyName} />
+            ) : (
+              <>
+                {selected.map((item) => {
+                  const category = categories.find(category => category[trackBy] === item)
+                  return (
+                    <Category size={size} key={category[trackBy]} label={category.name} color={category.color} />
+                  )
+                })}
+              </>
+            )}
+          </div>
+        ))}
+        {...props}
       >
         {categories.map((category) => (
           <MenuItem
             key={category[trackBy]}
             value={category[trackBy]}
           >
-            <Category label={name || category.name} color={category.color} />
+            <Category size={size} label={name || category.name} color={category.color} />
           </MenuItem>
         ))}
       </Select>
