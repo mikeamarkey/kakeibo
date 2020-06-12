@@ -14,20 +14,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Layout = ({ children, headerElements }) => {
+const Layout = ({ children, headerElements, title }) => {
   const css = useStyles()
   const [open, setOpen] = useState(false)
 
   return (
     <>
       <Head>
-        <title>Kakeibo</title>
+        <title>Kakeibo{title && ` | ${title}`}</title>
       </Head>
 
       <div className={css.root}>
         <Header
           setOpen={setOpen}
           headerElements={headerElements}
+          title={title}
         />
 
         {children}
