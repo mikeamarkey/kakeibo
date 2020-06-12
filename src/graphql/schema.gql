@@ -1,5 +1,6 @@
 type Transaction {
   category: Category @relation
+  createdAt: Int!
   date: Date!
   month: String!
   note: String

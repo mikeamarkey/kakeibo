@@ -26,6 +26,7 @@ const Footer = ({ month, categories, setDialogContent }) => {
             const date = moment().isSame(moment(month), 'month') ? undefined : month
             setDialogContent({
               category: category._id,
+              createdAt: moment().unix(),
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
               note: '',

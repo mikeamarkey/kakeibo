@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const sortTransactions = (a, b) => b._ts - a._ts
+const sortTransactions = (a, b) => b.createdAt - a.createdAt
 const sortTransactionGroups = (a, b) => moment(b).diff(a)
 
 const TransactionsList = ({ categories, month, transactions, setDialogContent }) => {
