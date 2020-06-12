@@ -1,14 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
 
-import {
-  Category,
-  CategoryDialog,
-  ContentContainer,
-  Layout,
-  Loading,
-  Subheader
-} from 'src/components'
+import { Category, CategoryDialog, ContentContainer, Layout, Loading } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
 import { getUnusedColor } from 'src/styles/color'
 
@@ -19,10 +12,8 @@ const Categories = () => {
   const categories = data ? data.getCategories.data : []
 
   return (
-    <Layout>
+    <Layout title='Categories'>
       <ContentContainer>
-        <Subheader>Categories</Subheader>
-
         {loading ? (
           <Loading />
         ) : (

@@ -19,16 +19,19 @@ const Index = () => {
   const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
-  const { data: dataC, loading: loadingC } = useQuery(GET_CATEGORIES)
+  const { data: dataC } = useQuery(GET_CATEGORIES)
+
+  const categories = dataC ? dataC.getCategories.data : []
   const transactions = dataT ? dataT.getTransactionsByMonth.data : []
 
   return (
-    <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} transactions={transactions} />}>
+    <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} />}>
       <ContentContainer>
         {loadingT ? (
           <Loading />
         ) : (
           <TransactionsList
+            categories={categories}
             month={month}
             transactions={transactions}
             setDialogContent={setDialogContent}
@@ -36,17 +39,15 @@ const Index = () => {
         )}
       </ContentContainer>
 
-      {!loadingC && (
-        <Footer
-          month={month}
-          categories={dataC.getCategories.data}
-          setDialogContent={setDialogContent}
-        />
-      )}
+      <Footer
+        month={month}
+        categories={categories}
+        setDialogContent={setDialogContent}
+      />
 
       {dialogContent && (
         <TransactionDialog
-          categories={dataC.getCategories.data}
+          categories={categories}
           dialogContent={dialogContent}
           transactions={transactions}
           setDialogContent={setDialogContent}

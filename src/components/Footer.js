@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   footer: {
     display: 'flex',
     overflowX: 'auto',
-    padding: theme.spacing(1),
+    padding: theme.spacing(0.5),
     borderTop: `1px solid ${theme.palette.divider}`,
     background: theme.palette.common.white
   }
@@ -26,6 +26,7 @@ const Footer = ({ month, categories, setDialogContent }) => {
             const date = moment().isSame(moment(month), 'month') ? undefined : month
             setDialogContent({
               category: category._id,
+              createdAt: moment().unix(),
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
               note: '',
