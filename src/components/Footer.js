@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   footer: {
     display: 'flex',
     overflowX: 'auto',
-    padding: theme.spacing(1),
+    padding: theme.spacing(0.5),
     borderTop: `1px solid ${theme.palette.divider}`,
     background: theme.palette.common.white
   }
