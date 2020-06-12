@@ -1,20 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const GET_TRANSACTIONS = gql`
-  query getTransactions {
-    getTransactions {
-      data {
-        _id
-        _ts
-        date
-        month
-        note
-        price
-      }
-    }
-  }
-`
-
 export const GET_TRANSACTIONS_BY_MONTH = gql`
   query getTransactionsByMonth($month: String!) {
     getTransactionsByMonth(month: $month) {
@@ -26,6 +11,7 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
           name
           color
         }
+        createdAt
         date
         month
         note
@@ -53,6 +39,12 @@ export const CREATE_TRANSACTION = gql`
     createTransaction(data: $data) {
       _id
       _ts
+      category {
+        _id
+        name
+        color
+      }
+      createdAt
       date
       month
       note
@@ -66,15 +58,16 @@ export const UPDATE_TRANSACTION = gql`
     updateTransaction: partialUpdateTransaction(id: $id, data: $data) {
       _id
       _ts
-      date
-      month
-      note
-      price
       category {
         _id
         name
         color
       }
+      createdAt
+      date
+      month
+      note
+      price
     }
   }
 `

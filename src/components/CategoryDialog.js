@@ -103,13 +103,15 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
           categories={colorArray.map(color => {
             return { color }
           })}
-          id='color'
           label='Color'
           name={form.name ? form.name : 'Category'}
-          value={form.color}
-          onChange={(e) => setForm({ ...form, color: e.target.value })}
-          required
           trackBy='color'
+          formControlProps={{ fullWidth: true, required: true }}
+          selectProps={{
+            id: 'color',
+            value: form.color,
+            onChange: (e) => setForm({ ...form, color: e.target.value })
+          }}
         />
       </DialogContent>
       <DialogActions>

@@ -79,11 +79,13 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       <DialogContent>
         <CategorySelect
           categories={categories}
-          id='category'
           label='Category'
-          value={form.category}
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
-          required
+          formControlProps={{ required: true, fullWidth: true }}
+          selectProps={{
+            id: 'category',
+            onChange: (e) => setForm({ ...form, category: e.target.value }),
+            value: form.category
+          }}
         />
 
         <TextField
