@@ -14,8 +14,10 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
         createdAt
         date
         month
+        name
         note
         price
+        type
       }
     }
   }
@@ -47,8 +49,10 @@ export const CREATE_TRANSACTION = gql`
       createdAt
       date
       month
+      name
       note
       price
+      type
     }
   }
 `
@@ -66,8 +70,10 @@ export const UPDATE_TRANSACTION = gql`
       createdAt
       date
       month
+      name
       note
       price
+      type
     }
   }
 `

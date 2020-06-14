@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   InputAdornment,
   TextField
 } from '@material-ui/core'
@@ -38,25 +39,34 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
     }
   })
-  const disabled = !form.category || !Number.isInteger(form.price) || !form.date.length
+  const disabled = form.type === 'DAILY'
+    ? !form.category || !Number.isInteger(form.price) || !form.date.length
+    : !form.name || !Number.isInteger(form.price)
+  const dialogTitle = ((type) => {
+    switch (type) {
+      case 'DAILY':
+        return 'Daily Transaction'
+      case 'INCOME':
+        return 'Income'
+      case 'EXPENSE':
+        return 'Expense'
+    }
+  })(form.type)
 
   function handleCreate () {
-    createTransaction({
-      variables: {
-        data: { ...form, category: { connect: form.category } }
-      }
-    })
+    const variables = form.type === 'DAILY'
+      ? { data: { ...form, category: { connect: form.category } } }
+      : { data: { ...form } }
+    createTransaction({ variables })
     handleClose()
   }
 
   function handleUpdate () {
-    const { date, price, note, category } = form
-    updateTransaction({
-      variables: {
-        id: form._id,
-        data: { date, price, note, category: { connect: category } }
-      }
-    })
+    const { date, name, price, note, category } = form
+    const data = form.type === 'DAILY'
+      ? { date, price, note, category: { connect: category } }
+      : { name, price, note }
+    updateTransaction({ variables: { id: form._id, data } })
     handleClose()
   }
 
@@ -76,31 +86,50 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       aria-labelledby='form-dialog-title'
       transitionDuration={100}
     >
+      <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <CategorySelect
-          categories={categories}
-          label='Category'
-          formControlProps={{ required: true, fullWidth: true }}
-          selectProps={{
-            id: 'category',
-            onChange: (e) => setForm({ ...form, category: e.target.value }),
-            value: form.category
-          }}
-        />
+        {form.type === 'DAILY' ? (
+          <>
+            <CategorySelect
+              categories={categories}
+              label='Category'
+              formControlProps={{ required: true, fullWidth: true }}
+              selectProps={{
+                id: 'category',
+                onChange: (e) => setForm({ ...form, category: e.target.value }),
+                value: form.category
+              }}
+            />
 
-        <TextField
-          id='date'
-          type='date'
-          label='Date'
-          margin='dense'
-          fullWidth
-          required
-          InputLabelProps={{
-            shrink: true
-          }}
-          value={form.date}
-          onChange={(e) => setForm({ ...form, date: e.target.value })}
-        />
+            <TextField
+              id='date'
+              type='date'
+              label='Date'
+              margin='dense'
+              fullWidth
+              required
+              InputLabelProps={{
+                shrink: true
+              }}
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+            />
+          </>
+        ) : (
+          <TextField
+            id='name'
+            type='text'
+            label='Name'
+            margin='dense'
+            fullWidth
+            required
+            InputLabelProps={{
+              shrink: true
+            }}
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+        )}
 
         <TextField
           id='price'

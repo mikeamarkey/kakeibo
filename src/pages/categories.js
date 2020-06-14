@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
+import { Container } from '@material-ui/core'
 
-import { Category, CategoryDialog, ContentContainer, Layout, Loading } from 'src/components'
+import { Category, CategoryDialog, Layout, Loading } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
 import { getUnusedColor } from 'src/styles/color'
 
@@ -13,34 +14,32 @@ const Categories = () => {
 
   return (
     <Layout title='Categories'>
-      <ContentContainer>
-        {loading ? (
-          <Loading />
-        ) : (
-          <div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Container size='sm'>
+          <Category
+            label='Add New Category'
+            onClick={() => {
+              setDialogContent({
+                name: '',
+                color: getUnusedColor(categories.map(category => category.color))
+              })
+            }}
+          />
+
+          {categories.map((category) => (
             <Category
-              label='Add New Category'
+              key={category._id}
+              label={category.name}
+              color={category.color}
               onClick={() => {
-                setDialogContent({
-                  name: '',
-                  color: getUnusedColor(categories.map(category => category.color))
-                })
+                setDialogContent({ ...category })
               }}
             />
-
-            {categories.map((category) => (
-              <Category
-                key={category._id}
-                label={category.name}
-                color={category.color}
-                onClick={() => {
-                  setDialogContent({ ...category })
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </ContentContainer>
+          ))}
+        </Container>
+      )}
 
       {dialogContent && (
         <CategoryDialog
