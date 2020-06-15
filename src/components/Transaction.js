@@ -28,19 +28,25 @@ const Transaction = ({ transaction, onClick }) => {
   return (
     <Card
       className={css.transaction}
-      onClick={() => onClick()}
+      onClick={onClick && onClick}
     >
       <CardActionArea>
         <CardContent className={css.content}>
           <div>
-            <Category
-              className={css.category}
-              size='small'
-              label={transaction.category.name}
-              color={transaction.category.color}
-            />
+            {transaction.type === 'DAILY' ? (
+              <Category
+                className={css.category}
+                size='small'
+                label={transaction.category.name}
+                color={transaction.category.color}
+              />
+            ) : (
+              <Typography variant='body2'>
+                {transaction.name}
+              </Typography>
+            )}
 
-            {transaction.note.length > 0 && (
+            {transaction.note && (
               <Typography
                 className={css.note}
                 variant='caption'

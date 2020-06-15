@@ -3,13 +3,11 @@ import { useQuery } from '@apollo/client'
 import moment from 'moment'
 
 import {
-  ContentContainer,
-  Footer,
   IndexAppBar,
   Layout,
   Loading,
   TransactionDialog,
-  TransactionsList
+  Transactions
 } from 'src/components'
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
@@ -26,24 +24,16 @@ const Index = () => {
 
   return (
     <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} />}>
-      <ContentContainer>
-        {loadingT ? (
-          <Loading />
-        ) : (
-          <TransactionsList
-            categories={categories}
-            month={month}
-            transactions={transactions}
-            setDialogContent={setDialogContent}
-          />
-        )}
-      </ContentContainer>
-
-      <Footer
-        month={month}
-        categories={categories}
-        setDialogContent={setDialogContent}
-      />
+      {loadingT ? (
+        <Loading />
+      ) : (
+        <Transactions
+          categories={categories}
+          month={month}
+          transactions={transactions}
+          setDialogContent={setDialogContent}
+        />
+      )}
 
       {dialogContent && (
         <TransactionDialog

@@ -1,10 +1,18 @@
+enum TransactionType {
+  DAILY
+  INCOME
+  EXPENSE
+}
+
 type Transaction {
   category: Category @relation
   createdAt: Int!
-  date: Date!
+  date: Date
   month: String!
+  name: String
   note: String
   price: Int!
+  type: TransactionType!
 }
 
 type Category {
