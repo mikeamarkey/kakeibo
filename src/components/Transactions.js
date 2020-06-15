@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Container,
   IconButton,
@@ -40,78 +40,60 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
   const css = useStyles()
 
   const daily = transactions.reduce((acc, transaction) => {
-    if (transaction.type !== 'DAILY') {
-      return acc
-    }
+    if (transaction.type === 'DAILY') {
+      if (!filter.category.length || filter.category.includes(transaction.category._id)) {
+        const date = acc.days[transaction.date]
+          ? acc.days[transaction.date]
+          : { total: 0, transactions: [] }
 
-    if (filter.category.length && !filter.category.includes(transaction.category._id)) {
-      return acc
-    }
-
-    if (!acc.days[transaction.date]) {
-      acc.days[transaction.date] = {
-        total: transaction.price,
-        transactions: [transaction]
+        date.price += transaction.price
+        date.transactions.push(transaction)
+        acc.days[transaction.date] = date
+        acc.total += transaction.price
       }
-    } else {
-      acc.days[transaction.date].total += transaction.price
-      acc.days[transaction.date].transactions.push(transaction)
     }
-    acc.total += transaction.price
     return acc
   }, { total: 0, days: {} })
 
-  const income = transactions.reduce((acc, transaction) => {
-    if (transaction.type === 'INCOME') {
-      acc.total += transaction.price
-      acc.transactions.push(transaction)
-    }
-    return acc
-  }, { total: 0, transactions: [] })
-
-  const expense = transactions.reduce((acc, transaction) => {
+  const monthly = useMemo(() => transactions.reduce((acc, transaction) => {
     if (transaction.type === 'EXPENSE') {
-      acc.total += transaction.price
-      acc.transactions.push(transaction)
-    }
-    return acc
-  }, { total: 0, transactions: [] })
-
-  const categoryGroups = transactions.reduce((acc, transaction) => {
-    if (transaction.type !== 'DAILY') {
-      return acc
-    }
-
-    if (!acc.categories[transaction.category._id]) {
-      acc.categories[transaction.category._id] = {
-        type: 'DAILY',
-        price: transaction.price,
-        category: {
-          name: transaction.category.name,
-          color: transaction.category.color
+      acc.expense.total += transaction.price
+      acc.expense.transactions.push(transaction)
+    } else if (transaction.type === 'INCOME') {
+      acc.income.total += transaction.price
+      acc.income.transactions.push(transaction)
+    } else if (transaction.type === 'DAILY') {
+      const categoryId = transaction.category._id
+      const category = acc.categories.ids[categoryId]
+        ? acc.categories.ids[categoryId]
+        : {
+          type: 'DAILY',
+          price: 0,
+          category: {
+            name: transaction.category.name,
+            color: transaction.category.color
+          }
         }
-      }
-    } else {
-      acc.categories[transaction.category._id].price += transaction.price
+
+      category.price += transaction.price
+      acc.categories.ids[categoryId] = category
+      acc.categories.total += transaction.price
     }
-    acc.total += transaction.price
+
+    acc.total += transaction.type === 'INCOME' ? transaction.price : -(transaction.price)
     return acc
-  }, { total: 0, categories: {} })
+  }, {
+    total: 0,
+    categories: { total: 0, ids: {} },
+    income: { total: 0, transactions: [] },
+    expense: { total: 0, transactions: [] }
+  }), [categories, month, transactions])
 
   const getTotal = () => {
     if (tab === 0) {
-      if (!filter.category.length) {
-        return categoryGroups.total
-      } else {
-        return Object.keys(categoryGroups.categories).reduce((acc, categoryId) => {
-          if (filter.category.includes(categoryId)) {
-            acc += categoryGroups.categories[categoryId].price
-          }
-          return acc
-        }, 0)
-      }
+      return daily.total
     } else {
-      return income.total - (categoryGroups.total + expense.total)
+      return monthly.total
     }
   }
 
@@ -179,9 +161,7 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
         <div hidden={tab !== 1}>
           <MonthlyTransactions
             month={month}
-            income={income}
-            expense={expense}
-            categoryGroups={categoryGroups}
+            monthly={monthly}
             setDialogContent={setDialogContent}
             setTab={setTab}
             setFilter={setFilter}

@@ -11,17 +11,15 @@ const useStyles = makeStyles((theme) => ({
 
 const MonthlyTransactions = ({
   month,
-  income,
-  expense,
-  categoryGroups,
+  monthly,
   setDialogContent,
   setFilter,
   setTab
 }) => {
   const css = useStyles()
   const groups = [
-    { label: 'Income', data: income },
-    { label: 'Expense', data: expense }
+    { label: 'Income', data: monthly.income },
+    { label: 'Expense', data: monthly.expense }
   ]
 
   return (
@@ -65,11 +63,11 @@ const MonthlyTransactions = ({
 
       <Subheader>
         <span>Daily</span>
-        <Price price={categoryGroups.total} />
+        <Price price={monthly.categories.total} />
       </Subheader>
 
-      {Object.keys(categoryGroups.categories).map((categoryId) => {
-        const group = categoryGroups.categories[categoryId]
+      {Object.keys(monthly.categories.ids).map((categoryId) => {
+        const group = monthly.categories.ids[categoryId]
         return (
           <Transaction
             key={categoryId}
