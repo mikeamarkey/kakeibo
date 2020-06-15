@@ -8,9 +8,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr',
-    gridTemplateRows: 'auto 1fr auto',
+    gridTemplateRows: 'auto 1fr',
     height: '100%',
     backgroundColor: theme.palette.background.level2
+  },
+  content: {
+    overflowY: 'auto',
+    marginTop: theme.spacing(1),
+    paddingBottom: theme.spacing(10)
   }
 }))
 
@@ -31,7 +36,9 @@ const Layout = ({ children, headerElements, title }) => {
           title={title}
         />
 
-        {children}
+        <div className={css.content}>
+          {children}
+        </div>
       </div>
 
       <Sidenav open={open} setOpen={setOpen} />

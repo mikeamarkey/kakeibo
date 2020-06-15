@@ -4,8 +4,12 @@ import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
   footer: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
     display: 'flex',
     overflowX: 'auto',
+    width: '100%',
     padding: theme.spacing(0.5),
     borderTop: `1px solid ${theme.palette.divider}`,
     background: theme.palette.common.white
@@ -30,7 +34,8 @@ const Footer = ({ month, categories, setDialogContent }) => {
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
               note: '',
-              price: ''
+              price: '',
+              type: 'DAILY'
             })
           }}
         />
