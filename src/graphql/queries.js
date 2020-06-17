@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_TRANSACTIONS_BY_MONTH = gql`
   query getTransactionsByMonth($month: String!) {
-    getTransactionsByMonth(month: $month) {
+    getTransactionsByMonth(month: $month, _size: 500) {
       data {
         _id
         _ts
