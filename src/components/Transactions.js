@@ -46,7 +46,7 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
           ? acc.days[transaction.date]
           : { total: 0, transactions: [] }
 
-        date.price += transaction.price
+        date.total += transaction.price
         date.transactions.push(transaction)
         acc.days[transaction.date] = date
         acc.total += transaction.price
@@ -87,7 +87,7 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
     categories: { total: 0, ids: {} },
     income: { total: 0, transactions: [] },
     expense: { total: 0, transactions: [] }
-  }), [categories, month, transactions])
+  }), [transactions])
 
   const getTotal = () => {
     if (tab === 0) {
