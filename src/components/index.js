@@ -1,5 +1,6 @@
 export { default as Category } from './Category'
 export { default as CategoryDialog } from './CategoryDialog'
+export { default as CategoryList } from './CategoryList'
 export { default as CategorySelect } from './CategorySelect'
 export { default as DailyTransactions } from './DailyTransactions'
 export { default as FlexSpacer } from './FlexSpacer'

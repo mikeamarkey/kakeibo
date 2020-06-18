@@ -8,14 +8,15 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
         _ts
         category {
           _id
-          name
           color
+          name
         }
         createdAt
         date
         month
         name
         note
+        order
         price
         type
       }
@@ -29,8 +30,9 @@ export const GET_CATEGORIES = gql`
       data {
         _id
         _ts
-        name
         color
+        name
+        order
       }
     }
   }
@@ -43,14 +45,15 @@ export const CREATE_TRANSACTION = gql`
       _ts
       category {
         _id
-        name
         color
+        name
       }
       createdAt
       date
       month
       name
       note
+      order
       price
       type
     }
@@ -72,6 +75,7 @@ export const UPDATE_TRANSACTION = gql`
       month
       name
       note
+      order
       price
       type
     }
@@ -91,8 +95,9 @@ export const CREATE_CATEGORY = gql`
     createCategory(data: $data) {
       _id
       _ts
-      name
       color
+      name
+      order
     }
   }
 `
@@ -102,8 +107,9 @@ export const UPDATE_CATEGORY = gql`
     updateCategory: partialUpdateCategory(id: $id, data: $data) {
       _id
       _ts
-      name
       color
+      name
+      order
     }
   }
 `
