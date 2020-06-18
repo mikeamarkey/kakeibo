@@ -1,5 +1,13 @@
-import { Card, CardActionArea, CardContent, Typography, makeStyles } from '@material-ui/core'
-import { Category, Price } from 'src/components'
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+  makeStyles
+} from '@material-ui/core'
+import { DragHandle } from '@material-ui/icons'
+import { SortableHandle } from 'react-sortable-hoc'
+import { Category, FlexSpacer, Price } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
   transaction: {
@@ -8,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'start',
     padding: theme.spacing(1)
   },
@@ -19,10 +27,20 @@ const useStyles = makeStyles((theme) => ({
   note: {
     margin: '4px 2px 0',
     color: theme.palette.text.secondary
+  },
+  drag: {
+    alignSelf: 'center',
+    padding: theme.spacing(1)
   }
 }))
 
-const Transaction = ({ transaction, onClick }) => {
+const DragElement = SortableHandle(({ className }) => (
+  <div className={className}>
+    <DragHandle />
+  </div>
+))
+
+const Transaction = ({ onClick, transaction, withSort = false }) => {
   const css = useStyles()
 
   return (
@@ -32,6 +50,10 @@ const Transaction = ({ transaction, onClick }) => {
     >
       <CardActionArea>
         <CardContent className={css.content}>
+          {withSort && (
+            <DragElement className={css.drag} />
+          )}
+
           <div>
             {transaction.type === 'DAILY' ? (
               <Category
@@ -56,6 +78,8 @@ const Transaction = ({ transaction, onClick }) => {
               </Typography>
             )}
           </div>
+
+          <FlexSpacer />
 
           <Typography variant='body2'>
             <Price price={transaction.price} />
