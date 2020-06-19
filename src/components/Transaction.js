@@ -5,10 +5,6 @@ const useStyles = makeStyles((theme) => ({
   row: {
     padding: theme.spacing(1)
   },
-  category: {
-    margin: 0,
-    pointerEvents: 'none'
-  },
   note: {
     margin: '4px 2px 0',
     color: theme.palette.text.secondary

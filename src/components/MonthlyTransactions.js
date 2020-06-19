@@ -6,7 +6,7 @@ import { AddCircleOutline } from '@material-ui/icons'
 import { SortableElement, SortableContainer } from 'react-sortable-hoc'
 import moment from 'moment'
 
-import { Price, Subheader, Transaction } from 'src/components'
+import { CategorySummary, Price, Subheader, Transaction } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 import { replaceInArray } from 'src/lib/utils'
 
@@ -135,9 +135,12 @@ const MonthlyTransactions = ({
       {Object.keys(monthly.categories.ids).map((categoryId) => {
         const group = monthly.categories.ids[categoryId]
         return (
-          <Transaction
+          <CategorySummary
             key={categoryId}
-            transaction={group}
+            color={group.color}
+            label={group.label}
+            total={group.total}
+            count={group.count}
             onClick={() => {
               setFilter({ category: [categoryId] })
               setTab(0)
