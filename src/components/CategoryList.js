@@ -1,42 +1,23 @@
 import { useMemo } from 'react'
 import { useApolloClient } from '@apollo/client'
 import produce from 'immer'
-import { Paper, makeStyles } from '@material-ui/core'
-import { DragHandle } from '@material-ui/icons'
-import { SortableElement, SortableContainer, SortableHandle } from 'react-sortable-hoc'
+import { makeStyles } from '@material-ui/core'
+import { SortableElement, SortableContainer } from 'react-sortable-hoc'
 
-import { Category } from 'src/components'
+import { Category, Row } from 'src/components'
 import { GET_CATEGORIES } from 'src/graphql/queries'
 import { replaceInArray } from 'src/lib/utils'
 import { getUnusedColor } from 'src/styles/color'
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    margin: `${theme.spacing(0.5)}px 0`,
-    display: 'flex',
-    justifyContent: 'start',
-    alignItems: 'center'
-  },
-  add: {
-    textAlign: 'center'
-  },
-  drag: {
-    padding: theme.spacing(1),
-    '& > svg': {
-      verticalAlign: 'middle'
-    }
+  addRow: {
+    justifyContent: 'center'
   }
 }))
 
 const CategoryList = ({ categories, setDialogContent }) => {
   const client = useApolloClient()
   const css = useStyles()
-
-  const DragElement = useMemo(() => SortableHandle(({ className }) => (
-    <div className={css.drag}>
-      <DragHandle />
-    </div>
-  )), [])
 
   const SortableList = useMemo(() => SortableContainer(({ items }) => (
     <div>
@@ -49,9 +30,7 @@ const CategoryList = ({ categories, setDialogContent }) => {
   )), [])
 
   const SortableItem = useMemo(() => SortableElement(({ category }) => (
-    <Paper key={category._id} className={css.paper}>
-      <DragElement />
-
+    <Row key={category._id} withSort>
       <Category
         key={category._id}
         label={category.name}
@@ -60,7 +39,7 @@ const CategoryList = ({ categories, setDialogContent }) => {
           setDialogContent({ ...category })
         }}
       />
-    </Paper>
+    </Row>
   )), [])
 
   const doSort = (items, oldIndex, newIndex) => {
@@ -100,7 +79,7 @@ const CategoryList = ({ categories, setDialogContent }) => {
 
   return (
     <>
-      <Paper className={css.add}>
+      <Row className={css.addRow}>
         <Category
           label='Add New Category'
           onClick={() => {
@@ -110,7 +89,7 @@ const CategoryList = ({ categories, setDialogContent }) => {
             })
           }}
         />
-      </Paper>
+      </Row>
 
       <SortableList
         items={categories}
