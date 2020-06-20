@@ -8,9 +8,7 @@ const client = new ApolloClient({
       authorization: 'Bearer fnADtUFCgqACDGkq9SysTIdCXL3xW9D1PH6HW11t',
       'X-Schema-Preview': 'partial-update-mutation'
     },
-    /* eslint-disable */
     fetch
-    /* eslint-enable */
   }),
   cache: new InMemoryCache({
     freezeResults: true

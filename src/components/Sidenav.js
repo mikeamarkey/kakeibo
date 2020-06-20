@@ -9,9 +9,9 @@ import {
 import { Category, Receipt } from '@material-ui/icons'
 import { Link } from 'src/components'
 
-const useStyles = makeStyles((them) => ({
+const useStyles = makeStyles((theme) => ({
   list: {
-    width: '250px'
+    width: theme.spacing(32)
   }
 }))
 

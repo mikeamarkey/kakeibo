@@ -4,7 +4,7 @@ import { Footer, Price, Subheader, Transaction } from 'src/components'
 const sortTransactions = (a, b) => b.createdAt - a.createdAt
 const sortTransactionGroups = (a, b) => moment(b).diff(a)
 
-const DailyTransactions = ({ categories, month, daily, setDialogContent, filter }) => {
+const DailyTransactions = ({ categories, month, daily, setDialogContent }) => {
   return (
     <>
       {Object.keys(daily.days).sort(sortTransactionGroups).map((date) => (

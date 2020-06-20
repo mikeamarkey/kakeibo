@@ -19,8 +19,12 @@ const Index = () => {
   })
   const { data: dataC } = useQuery(GET_CATEGORIES)
 
-  const categories = dataC ? dataC.getCategories.data : []
-  const transactions = dataT ? dataT.getTransactionsByMonth.data : []
+  const categories = dataC
+    ? dataC.getCategories.data.slice().sort((a, b) => a.order - b.order)
+    : []
+  const transactions = dataT
+    ? dataT.getTransactionsByMonth.data.slice().sort((a, b) => a.order - b.order)
+    : []
 
   return (
     <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} />}>
