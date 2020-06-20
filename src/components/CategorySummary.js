@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme) => ({
   },
   right: {
     textAlign: 'right'
+  },
+  count: {
+    margin: `${theme.spacing(0.5)}px ${theme.spacing(0.25)}px 0`,
+    color: theme.palette.text.secondary
   }
 }))
 
@@ -27,16 +31,12 @@ const CategorySummary = ({ label, color, count, total, ...props }) => {
       <FlexSpacer />
 
       <div className={css.right}>
-        <Typography variant='body2'>
+        <Typography variant='body2' component='div'>
           <Price price={total} />
+        </Typography>
 
-          <Typography
-            className={css.note}
-            variant='caption'
-            component='div'
-          >
-            {count}
-          </Typography>
+        <Typography className={css.count} variant='caption' component='div'>
+          {count}
         </Typography>
       </div>
     </Row>

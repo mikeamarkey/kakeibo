@@ -32,13 +32,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Row = ({ children, className: classNameProp, ...props }) => {
+const Row = ({ children, className: classNameProp, withSort, ...props }) => {
   const css = useStyles()
   const rowClass = clsx(css.row, props.onClick && css.rowClickable, classNameProp)
 
   return (
     <Paper className={rowClass} square {...props}>
-      {props.withSort && (
+      {withSort && (
         <DragElement className={css.drag} />
       )}
       {Children.map(children, child => child)}
