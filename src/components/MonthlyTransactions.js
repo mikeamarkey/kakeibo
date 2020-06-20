@@ -3,6 +3,7 @@ import { AddCircleOutline } from '@material-ui/icons'
 import moment from 'moment'
 
 import { CategorySummary, Price, SortableList, Subheader, Transaction } from 'src/components'
+import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   create: {
@@ -45,6 +46,9 @@ const MonthlyTransactions = ({
                   }}
                 />
               )}
+              query={GET_TRANSACTIONS_BY_MONTH}
+              variables={{ month }}
+              url='/api/transaction/sort'
             />
 
             <div className={css.create}>
