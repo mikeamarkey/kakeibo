@@ -1,68 +1,54 @@
-import { Card, CardActionArea, CardContent, Typography, makeStyles } from '@material-ui/core'
-import { Category, Price } from 'src/components'
+import { Typography, makeStyles } from '@material-ui/core'
+import { Category, FlexSpacer, Price, Row } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
-  transaction: {
-    margin: `${theme.spacing(0.5)}px 0`,
-    borderRadius: 0
-  },
-  content: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'start',
+  row: {
     padding: theme.spacing(1)
   },
-  category: {
-    margin: 0,
-    pointerEvents: 'none'
-  },
   note: {
-    margin: '4px 2px 0',
+    margin: `${theme.spacing(0.5)}px ${theme.spacing(0.25)}px 0`,
     color: theme.palette.text.secondary
   }
 }))
 
-const Transaction = ({ transaction, onClick }) => {
+const Transaction = ({ transaction, ...props }) => {
   const css = useStyles()
 
   return (
-    <Card
-      className={css.transaction}
-      onClick={onClick && onClick}
-    >
-      <CardActionArea>
-        <CardContent className={css.content}>
-          <div>
-            {transaction.type === 'DAILY' ? (
-              <Category
-                className={css.category}
-                size='small'
-                label={transaction.category.name}
-                color={transaction.category.color}
-              />
-            ) : (
-              <Typography variant='body2'>
-                {transaction.name}
-              </Typography>
-            )}
-
-            {transaction.note && (
-              <Typography
-                className={css.note}
-                variant='caption'
-                component='div'
-              >
-                {transaction.note}
-              </Typography>
-            )}
-          </div>
-
+    <Row {...props} className={css.row}>
+      <div>
+        {transaction.type === 'DAILY' ? (
+          <Category
+            className={css.category}
+            size='small'
+            label={transaction.category.name}
+            color={transaction.category.color}
+          />
+        ) : (
           <Typography variant='body2'>
-            <Price price={transaction.price} />
+            {transaction.name}
           </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+        )}
+
+        {transaction.note && (
+          <Typography
+            className={css.note}
+            variant='caption'
+            component='div'
+          >
+            {transaction.note}
+          </Typography>
+        )}
+      </div>
+
+      <FlexSpacer />
+
+      <div>
+        <Typography variant='body2' component='div'>
+          <Price price={transaction.price} />
+        </Typography>
+      </div>
+    </Row>
   )
 }
 

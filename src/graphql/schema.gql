@@ -11,17 +11,20 @@ type Transaction {
   month: String!
   name: String
   note: String
+  order: Int
   price: Int!
   type: TransactionType!
 }
 
 type Category {
-  name: String!
   color: String!
+  name: String!
+  order: Int
 }
 
 type Query {
   getCategories: [Category!]!
   getTransactions: [Transaction!]!
   getTransactionsByMonth(month: String!): [Transaction!]!
+  getTransactionsByType(type: TransactionType!): [Transaction!]!
 }

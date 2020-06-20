@@ -67,15 +67,14 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
       const category = acc.categories.ids[categoryId]
         ? acc.categories.ids[categoryId]
         : {
-          type: 'DAILY',
-          price: 0,
-          category: {
-            name: transaction.category.name,
-            color: transaction.category.color
-          }
+          total: 0,
+          count: 0,
+          label: transaction.category.name,
+          color: transaction.category.color
         }
 
-      category.price += transaction.price
+      category.total += transaction.price
+      category.count++
       acc.categories.ids[categoryId] = category
       acc.categories.total += transaction.price
     }
