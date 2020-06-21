@@ -70,20 +70,22 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
           total: 0,
           count: 0,
           label: transaction.category.name,
-          color: transaction.category.color
+          color: transaction.category.color,
+          order: transaction.category.order
         }
 
       category.total += transaction.price
       category.count++
       acc.categories.ids[categoryId] = category
       acc.categories.total += transaction.price
+      acc.categories.count++
     }
 
     acc.total += transaction.type === 'INCOME' ? transaction.price : -(transaction.price)
     return acc
   }, {
     total: 0,
-    categories: { total: 0, ids: {} },
+    categories: { total: 0, count: 0, ids: {} },
     income: { total: 0, transactions: [] },
     expense: { total: 0, transactions: [] }
   }), [transactions])

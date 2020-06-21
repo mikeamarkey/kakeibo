@@ -72,25 +72,29 @@ const MonthlyTransactions = ({
 
       <Subheader>
         <span>Daily</span>
-        <Price price={monthly.categories.total} />
+        <div>
+          <Price price={monthly.categories.total} /> ({monthly.categories.count})
+        </div>
       </Subheader>
 
-      {Object.keys(monthly.categories.ids).map((categoryId) => {
-        const group = monthly.categories.ids[categoryId]
-        return (
-          <CategorySummary
-            key={categoryId}
-            color={group.color}
-            label={group.label}
-            total={group.total}
-            count={group.count}
-            onClick={() => {
-              setFilter({ category: [categoryId] })
-              setTab(0)
-            }}
-          />
-        )
-      })}
+      {Object.keys(monthly.categories.ids)
+        .sort((a, b) => monthly.categories.ids[a].order - monthly.categories.ids[b].order)
+        .map((categoryId) => {
+          const group = monthly.categories.ids[categoryId]
+          return (
+            <CategorySummary
+              key={categoryId}
+              color={group.color}
+              label={group.label}
+              total={group.total}
+              count={group.count}
+              onClick={() => {
+                setFilter({ category: [categoryId] })
+                setTab(0)
+              }}
+            />
+          )
+        })}
     </>
   )
 }
