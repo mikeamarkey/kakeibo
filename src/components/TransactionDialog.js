@@ -10,33 +10,52 @@ import {
   TextField
 } from '@material-ui/core'
 import produce from 'immer'
+import moment from 'moment'
 
 import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
+function removeCacheItem (store, item, variables) {
+  const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+  const data = produce(cache, (draft) => {
+    draft.getTransactionsByMonth.data = draft.getTransactionsByMonth.data.filter((i) => {
+      return i._id !== item._id
+    })
+  })
+  store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+}
+
+function createCacheItem (store, item, variables) {
+  try {
+    const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+    const data = produce(cache, (draft) => {
+      draft.getTransactionsByMonth.data.push(item)
+    })
+    store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+  } catch (e) {
+    console.log('Skipping writing to nonexistent cache.')
+  }
+}
+
 const TransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     update (store, { data: { createTransaction } }) {
-      const variables = { month }
-      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
-      const data = produce(cache, (draft) => {
-        draft.getTransactionsByMonth.data.push(createTransaction)
-      })
-      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+      createCacheItem(store, createTransaction, { month: createTransaction.month })
+    }
+  })
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, {
+    update (store, { data: { updateTransaction } }) {
+      if (updateTransaction.month === month) {
+        return
+      }
+      removeCacheItem(store, updateTransaction, { month })
+      createCacheItem(store, updateTransaction, { month: updateTransaction.month })
     }
   })
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     update (store, { data: { deleteTransaction } }) {
-      const variables = { month }
-      const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
-      const data = produce(cache, (draft) => {
-        draft.getTransactionsByMonth.data = draft.getTransactionsByMonth.data.filter((item) => {
-          return item._id !== deleteTransaction._id
-        })
-      })
-      store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+      removeCacheItem(store, deleteTransaction, { month })
     }
   })
   const disabled = form.type === 'DAILY'
@@ -62,12 +81,17 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
   }
 
   function handleUpdate () {
-    const { date, name, price, note, category } = form
+    const { date, month, name, price, note, category } = form
     const data = form.type === 'DAILY'
-      ? { date, price, note, category: { connect: category } }
+      ? { date, month, price, note, category: { connect: category } }
       : { name, price, note }
     updateTransaction({ variables: { id: form._id, data } })
     handleClose()
+  }
+
+  function handleDateChange (date) {
+    const month = moment(date).format('YYYYMM')
+    setForm({ ...form, date, month })
   }
 
   function handleDelete () {
@@ -112,7 +136,7 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
                 shrink: true
               }}
               value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
+              onChange={(e) => handleDateChange(e.target.value)}
             />
           </>
         ) : (
