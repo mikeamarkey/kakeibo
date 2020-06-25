@@ -6,14 +6,12 @@ import {
   IndexAppBar,
   Layout,
   Loading,
-  TransactionDialog,
   Transactions
 } from 'src/components'
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const Index = () => {
   const [month, setMonth] = useState(moment().format('YYYYMM'))
-  const [dialogContent, setDialogContent] = useState(null)
   const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
@@ -35,17 +33,6 @@ const Index = () => {
           categories={categories}
           month={month}
           transactions={transactions}
-          setDialogContent={setDialogContent}
-        />
-      )}
-
-      {dialogContent && (
-        <TransactionDialog
-          categories={categories}
-          dialogContent={dialogContent}
-          transactions={transactions}
-          setDialogContent={setDialogContent}
-          month={month}
         />
       )}
     </Layout>

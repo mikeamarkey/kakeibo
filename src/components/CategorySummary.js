@@ -3,17 +3,8 @@ import { Category, FlexSpacer, Price, Row } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
   row: {
-    padding: theme.spacing(1)
-  },
-  category: {
-    alignSelf: 'center'
-  },
-  right: {
-    textAlign: 'right'
-  },
-  count: {
-    margin: `${theme.spacing(0.5)}px ${theme.spacing(0.25)}px 0`,
-    color: theme.palette.text.secondary
+    padding: theme.spacing(1),
+    alignItems: 'center'
   }
 }))
 
@@ -23,22 +14,16 @@ const CategorySummary = ({ label, color, count, total, ...props }) => {
   return (
     <Row {...props} className={css.row}>
       <Category
-        className={css.category}
         label={label}
         color={color}
+        size='small'
       />
 
       <FlexSpacer />
 
-      <div className={css.right}>
-        <Typography variant='body2' component='div'>
-          <Price price={total} />
-        </Typography>
-
-        <Typography className={css.count} variant='caption' component='div'>
-          {count}
-        </Typography>
-      </div>
+      <Typography variant='body2' component='div'>
+        <Price price={total} /> ({count})
+      </Typography>
     </Row>
   )
 }

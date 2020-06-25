@@ -10,6 +10,7 @@ export const GET_TRANSACTIONS_BY_MONTH = gql`
           _id
           color
           name
+          order
         }
         createdAt
         date
@@ -47,6 +48,7 @@ export const CREATE_TRANSACTION = gql`
         _id
         color
         name
+        order
       }
       createdAt
       date
@@ -69,6 +71,7 @@ export const UPDATE_TRANSACTION = gql`
         _id
         name
         color
+        order
       }
       createdAt
       date

@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { makeStyles } from '@material-ui/core'
-import { Category } from 'src/components'
+import { Category, DynamicTransactionDialog } from 'src/components'
 import moment from 'moment'
 
 const useStyles = makeStyles((theme) => ({
@@ -17,30 +18,58 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Footer = ({ month, categories, setDialogContent }) => {
+  const [dynamicDialogContent, setDynamicDialogContent] = useState(null)
   const css = useStyles()
 
   return (
-    <div className={css.footer}>
-      {categories.map((category) => (
+    <>
+      <div className={css.footer}>
         <Category
-          key={category._id}
-          label={category.name}
-          color={category.color}
+          label='Add Multiple'
           onClick={() => {
             const date = moment().isSame(moment(month), 'month') ? undefined : month
-            setDialogContent({
-              category: category._id,
+            setDynamicDialogContent({
               createdAt: moment().unix(),
               date: moment(date).format('YYYY-MM-DD'),
               month: month,
-              note: '',
-              price: '',
-              type: 'DAILY'
+              type: 'DAILY',
+              total: '',
+              transactions: [
+                { category: '', note: '', price: '' }
+              ]
             })
           }}
         />
-      ))}
-    </div>
+        {categories.map((category) => (
+          <Category
+            key={category._id}
+            label={category.name}
+            color={category.color}
+            onClick={() => {
+              const date = moment().isSame(moment(month), 'month') ? undefined : month
+              setDialogContent({
+                category: category._id,
+                createdAt: moment().unix(),
+                date: moment(date).format('YYYY-MM-DD'),
+                month: month,
+                note: '',
+                price: '',
+                type: 'DAILY'
+              })
+            }}
+          />
+        ))}
+      </div>
+
+      {dynamicDialogContent && (
+        <DynamicTransactionDialog
+          categories={categories}
+          dialogContent={dynamicDialogContent}
+          setDialogContent={setDynamicDialogContent}
+          month={month}
+        />
+      )}
+    </>
   )
 }
 

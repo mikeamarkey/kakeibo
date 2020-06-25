@@ -15,7 +15,8 @@ import {
   DailyTransactions,
   FlexSpacer,
   MonthlyTransactions,
-  Price
+  Price,
+  TransactionDialog
 } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -34,9 +35,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Transactions = ({ categories, month, transactions, setDialogContent }) => {
+const Transactions = ({ categories, month, transactions }) => {
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState({ category: [] })
+  const [dialogContent, setDialogContent] = useState(null)
   const css = useStyles()
 
   const daily = transactions.reduce((acc, transaction) => {
@@ -70,20 +72,22 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
           total: 0,
           count: 0,
           label: transaction.category.name,
-          color: transaction.category.color
+          color: transaction.category.color,
+          order: transaction.category.order
         }
 
       category.total += transaction.price
       category.count++
       acc.categories.ids[categoryId] = category
       acc.categories.total += transaction.price
+      acc.categories.count++
     }
 
     acc.total += transaction.type === 'INCOME' ? transaction.price : -(transaction.price)
     return acc
   }, {
     total: 0,
-    categories: { total: 0, ids: {} },
+    categories: { total: 0, count: 0, ids: {} },
     income: { total: 0, transactions: [] },
     expense: { total: 0, transactions: [] }
   }), [transactions])
@@ -167,6 +171,15 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
           />
         </div>
       </Container>
+
+      {dialogContent && (
+        <TransactionDialog
+          categories={categories}
+          dialogContent={dialogContent}
+          setDialogContent={setDialogContent}
+          month={month}
+        />
+      )}
     </>
   )
 }
