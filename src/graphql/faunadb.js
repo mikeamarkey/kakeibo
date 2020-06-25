@@ -32,4 +32,28 @@ function sort (data, collection) {
   )
 }
 
-export { sort }
+function createMultiple (data) {
+  const transactions = data.map((t) => {
+    return {
+      ...t,
+      date: q.ToDate(t.date),
+      category: q.Ref(q.Collection('Category'), t.category)
+    }
+  })
+
+  return client.query(
+    q.Map(
+      transactions,
+      q.Lambda(
+        'data',
+        q.Create(
+          q.Collection('Transaction'), {
+            data: q.Var('data')
+          }
+        )
+      )
+    )
+  )
+}
+
+export { sort, createMultiple }

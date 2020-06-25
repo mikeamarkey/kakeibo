@@ -27,6 +27,7 @@ const CategorySelect = ({
       <Select
         {...selectProps}
         labelId={labelId}
+        displayEmpty={!!emptyName}
         renderValue={selectProps.multiple && ((selected) => (
           <div className={css.renderValues}>
             {selected.length <= 0 ? (
@@ -45,6 +46,13 @@ const CategorySelect = ({
         ))}
         {...props}
       >
+        {!selectProps.multiple && emptyName && (
+          <MenuItem
+            value=''
+          >
+            <Category size={size} label={emptyName} />
+          </MenuItem>
+        )}
         {categories.map((category) => (
           <MenuItem
             key={category[trackBy]}

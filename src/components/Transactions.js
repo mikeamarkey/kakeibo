@@ -15,7 +15,8 @@ import {
   DailyTransactions,
   FlexSpacer,
   MonthlyTransactions,
-  Price
+  Price,
+  TransactionDialog
 } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -34,9 +35,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Transactions = ({ categories, month, transactions, setDialogContent }) => {
+const Transactions = ({ categories, month, transactions }) => {
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState({ category: [] })
+  const [dialogContent, setDialogContent] = useState(null)
   const css = useStyles()
 
   const daily = transactions.reduce((acc, transaction) => {
@@ -169,6 +171,15 @@ const Transactions = ({ categories, month, transactions, setDialogContent }) => 
           />
         </div>
       </Container>
+
+      {dialogContent && (
+        <TransactionDialog
+          categories={categories}
+          dialogContent={dialogContent}
+          setDialogContent={setDialogContent}
+          month={month}
+        />
+      )}
     </>
   )
 }

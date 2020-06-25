@@ -81,6 +81,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
       onClose={() => handleClose()}
       aria-labelledby='form-dialog-title'
       transitionDuration={100}
+      maxWidth='xs'
       PaperProps={{
         className: css.dialog
       }}

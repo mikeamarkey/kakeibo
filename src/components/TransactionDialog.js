@@ -109,6 +109,7 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
       onClose={() => handleClose()}
       aria-labelledby='form-dialog-title'
       transitionDuration={100}
+      maxWidth='xs'
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
