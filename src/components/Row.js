@@ -25,10 +25,9 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   drag: {
-    padding: theme.spacing(1),
-    '& > svg': {
-      verticalAlign: 'middle'
-    }
+    alignSelf: 'center',
+    marginRight: theme.spacing(1),
+    padding: theme.spacing(1)
   }
 }))
 

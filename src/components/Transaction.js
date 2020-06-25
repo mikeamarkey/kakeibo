@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
   note: {
     margin: `${theme.spacing(0.5)}px ${theme.spacing(0.25)}px 0`,
     color: theme.palette.text.secondary
+  },
+  right: {
+    marginLeft: theme.spacing(2)
   }
 }))
 
@@ -43,11 +46,9 @@ const Transaction = ({ transaction, ...props }) => {
 
       <FlexSpacer />
 
-      <div>
-        <Typography variant='body2' component='div'>
-          <Price price={transaction.price} />
-        </Typography>
-      </div>
+      <Typography className={css.right} variant='body2' component='div'>
+        <Price price={transaction.price} />
+      </Typography>
     </Row>
   )
 }
