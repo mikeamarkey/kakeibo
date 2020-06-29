@@ -16,10 +16,13 @@ import { AddCircleOutline, RemoveCircleOutline } from '@material-ui/icons'
 import moment from 'moment'
 import produce from 'immer'
 
-import { CategorySelect } from 'src/components'
+import { CategorySelect, Loading } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
+  content: {
+    position: 'relative'
+  },
   row: {
     display: 'flex',
     '& > *': {
@@ -46,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
+  const [loading, setLoading] = useState(false)
   const client = useApolloClient()
   const css = useStyles()
 
@@ -55,21 +59,30 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
   }
 
   async function handleCreate () {
+    setLoading(true)
     const { transactions, total, ...shared } = form
     const data = transactions.map((transaction) => {
       return { ...transaction, ...shared }
     })
 
-    fetch('/api/transaction/createMultiple', {
+    const result = await fetch('/api/transaction/createMultiple', {
       method: 'POST',
       body: JSON.stringify(data)
     })
+    const created = await result.json()
 
     try {
       const variables = { month: form.month }
       const cache = client.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
       const data = produce(cache, (draft) => {
-        draft.getTransactionsByMonth.data.push(...transactions)
+        [...created].forEach((transaction) => {
+          const category = categories.find((c) => c._id === transaction.category)
+          draft.getTransactionsByMonth.data.push({
+            __typename: 'Transaction',
+            ...transaction,
+            category: { ...category }
+          })
+        })
       })
       client.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
     } catch (e) {
@@ -99,7 +112,11 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
       maxWidth='xs'
     >
       <DialogTitle>Create Transactions</DialogTitle>
-      <DialogContent>
+      <DialogContent className={css.content}>
+        {loading && (
+          <Loading dim />
+        )}
+
         <div className={css.row}>
           <TextField
             autoFocus
