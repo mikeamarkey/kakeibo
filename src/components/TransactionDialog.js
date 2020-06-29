@@ -170,7 +170,7 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
           InputLabelProps={{
             shrink: true
           }}
-          value={form.price ? form.price : ''}
+          value={form.price}
           onChange={(e) => {
             let value = ''
             if (e.target.value.length) {
