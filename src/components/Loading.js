@@ -1,18 +1,33 @@
 import { CircularProgress, makeStyles } from '@material-ui/core'
+import clsx from 'clsx'
 
 const size = 80
 const useStyles = makeStyles(theme => ({
   root: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+    width: '100%',
+    height: '100%'
+  },
+  dim: {
+    opacity: 0.5,
+    backgroundColor: theme.palette.common.white
+  },
+  loading: {
     position: 'absolute',
     top: `calc(50% - ${size / 2}px)`,
     left: `calc(50% - ${size / 2}px)`
   }
 }))
 
-const Loading = () => {
+const Loading = ({ dim = false }) => {
   const css = useStyles()
   return (
-    <CircularProgress className={css.root} size={size} />
+    <div className={clsx(css.root, dim && css.dim)}>
+      <CircularProgress className={css.loading} size={size} />
+    </div>
   )
 }
 
