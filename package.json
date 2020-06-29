@@ -40,6 +40,8 @@
     "*.js": "standard --fix"
   },
   "standard": {
-    "globals": ["fetch"]
+    "globals": [
+      "fetch"
+    ]
   }
 }
