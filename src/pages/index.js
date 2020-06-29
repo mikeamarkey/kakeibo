@@ -11,8 +11,10 @@ import {
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
 const Index = () => {
+  const [filter, setFilter] = useState({ category: [] })
   const [month, setMonth] = useState(moment().format('YYYYMM'))
-  const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
+  const [tab, setTab] = useState(0)
+  const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
   const { data: dataC } = useQuery(GET_CATEGORIES)
@@ -31,8 +33,13 @@ const Index = () => {
       ) : (
         <Transactions
           categories={categories}
+          filter={filter}
           month={month}
+          tab={tab}
+          setFilter={setFilter}
+          setTab={setTab}
           transactions={transactions}
+          refetch={refetchT}
         />
       )}
     </Layout>
