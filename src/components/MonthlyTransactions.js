@@ -20,8 +20,8 @@ const MonthlyTransactions = ({
 }) => {
   const css = useStyles()
   const groups = [
-    { label: 'Income', ...monthly.income },
-    { label: 'Expense', ...monthly.expense }
+    { label: 'Income', ...monthly.income, type: 'INCOME' },
+    { label: 'Expense', ...monthly.expense, type: 'EXPENSE' }
   ]
 
   return (

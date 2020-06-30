@@ -56,4 +56,40 @@ function createMultiple (data) {
   )
 }
 
-export { sort, createMultiple }
+async function initialize (data) {
+  const result = await client.query(
+    q.Map(
+      q.Paginate(
+        q.Intersection(
+          q.Match(q.Index('getTransactionsByMonth'), data.from),
+          q.Union(
+            q.Match(q.Index('getTransactionsByType'), 'EXPENSE'),
+            q.Match(q.Index('getTransactionsByType'), 'INCOME')
+          )
+        )
+      ),
+      q.Lambda('x', q.Get(q.Var('x')))
+    )
+  )
+
+  let createdAt = data.createdAt
+  const createItems = result.data.map((item) => {
+    return { ...item.data, month: data.to, createdAt: createdAt++ }
+  })
+
+  return client.query(
+    q.Map(
+      createItems,
+      q.Lambda(
+        'data',
+        q.Create(
+          q.Collection('Transaction'), {
+            data: q.Var('data')
+          }
+        )
+      )
+    )
+  )
+}
+
+export { sort, createMultiple, initialize }
