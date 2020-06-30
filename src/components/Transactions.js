@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import {
+  Button,
   Container,
   IconButton,
   Paper,
@@ -14,6 +15,7 @@ import {
   CategorySelect,
   DailyTransactions,
   FlexSpacer,
+  InitializeDialog,
   MonthlyTransactions,
   Price,
   TransactionDialog
@@ -35,10 +37,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Transactions = ({ categories, month, transactions }) => {
-  const [tab, setTab] = useState(0)
-  const [filter, setFilter] = useState({ category: [] })
+const Transactions = ({ categories, filter, month, refetch, tab, setTab, setFilter, transactions }) => {
   const [dialogContent, setDialogContent] = useState(null)
+  const [openInitializeDialog, setOpenInitializeDialog] = useState(false)
   const css = useStyles()
 
   const daily = transactions.reduce((acc, transaction) => {
@@ -92,6 +93,8 @@ const Transactions = ({ categories, month, transactions }) => {
     expense: { total: 0, transactions: [] }
   }), [transactions])
 
+  const canInitialize = !monthly.income.total || !monthly.expense.total
+
   const getTotal = () => {
     if (tab === 0) {
       return daily.total
@@ -143,6 +146,12 @@ const Transactions = ({ categories, month, transactions }) => {
           </>
         )}
 
+        {tab === 1 && canInitialize && (
+          <Button onClick={() => setOpenInitializeDialog(true)}>
+            Initialize Monthly
+          </Button>
+        )}
+
         <FlexSpacer />
 
         <Typography className={css.total} variant='h6'>
@@ -178,6 +187,15 @@ const Transactions = ({ categories, month, transactions }) => {
           dialogContent={dialogContent}
           setDialogContent={setDialogContent}
           month={month}
+        />
+      )}
+
+      {tab === 1 && openInitializeDialog && (
+        <InitializeDialog
+          categories={categories}
+          month={month}
+          refetch={refetch}
+          setOpen={setOpenInitializeDialog}
         />
       )}
     </>
