@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useApolloClient } from '@apollo/client'
 import { SortableElement, SortableContainer } from 'react-sortable-hoc'
 import produce from 'immer'
+import { getAuthToken } from 'src/lib/auth'
 import { replaceInArray } from 'src/lib/utils'
 
 const SortableList = ({ itemElement, items, query, variables, url }) => {
@@ -53,7 +54,7 @@ const SortableList = ({ itemElement, items, query, variables, url }) => {
 
           return fetch(url, {
             method: 'POST',
-            body: JSON.stringify(updateItems)
+            body: JSON.stringify({ token: getAuthToken(), items: updateItems })
           })
         }
       }}

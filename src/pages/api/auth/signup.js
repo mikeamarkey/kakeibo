@@ -9,7 +9,8 @@ const SignUp = async (req, res) => {
   const input = await JSON.parse(req.body)
   await signup(input)
   const loginResult = await login(input)
-  res.json(loginResult)
+  const authData = { token: loginResult.secret, id: loginResult.instance.id }
+  res.json(authData)
 }
 
 export default SignUp

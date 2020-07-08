@@ -8,7 +8,8 @@ const Login = async (req, res) => {
 
   const input = await JSON.parse(req.body)
   const result = await login(input)
-  res.json(result)
+  const authData = { token: result.secret, id: result.instance.id }
+  res.json(authData)
 }
 
 export default Login

@@ -1,6 +1,7 @@
+import Router from 'next/router'
 import { ApolloClient, ApolloLink, InMemoryCache, createHttpLink, from } from '@apollo/client'
 import { onError } from '@apollo/link-error'
-import { getToken, removeToken } from 'src/lib/auth'
+import { getAuthToken, removeAuthData } from 'src/lib/auth'
 
 const httpLink = createHttpLink({
   uri: 'https://graphql.fauna.com/graphql',
@@ -14,7 +15,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers = {} }) => ({
     headers: {
       ...headers,
-      authorization: `Bearer ${getToken()}`
+      authorization: `Bearer ${getAuthToken()}`
     }
   }))
 
@@ -23,8 +24,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const logoutLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors.length > 0 && graphQLErrors[0].message === 'Invalid database secret.') {
-    console.log('removing token and signing out...')
-    removeToken()
+    console.log('removing auth data and signing out...')
+    removeAuthData()
+    Router.reload()
   }
 })
 

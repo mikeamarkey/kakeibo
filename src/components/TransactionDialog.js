@@ -12,6 +12,7 @@ import {
 import produce from 'immer'
 import moment from 'moment'
 
+import { getAuthId } from 'src/lib/auth'
 import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from 'src/graphql/queries'
 
@@ -73,9 +74,10 @@ const TransactionDialog = ({ categories, month, dialogContent, setDialogContent 
   })(form.type)
 
   function handleCreate () {
+    const user = { connect: getAuthId() }
     const variables = form.type === 'DAILY'
-      ? { data: { ...form, category: { connect: form.category } } }
-      : { data: { ...form } }
+      ? { data: { user, ...form, category: { connect: form.category } } }
+      : { data: { user, ...form } }
     createTransaction({ variables })
     handleClose()
   }

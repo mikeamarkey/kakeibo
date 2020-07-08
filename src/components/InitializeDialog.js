@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core'
 import moment from 'moment'
 
+import { getAuthToken } from 'src/lib/auth'
 import { Loading } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +31,12 @@ const InitializeDialog = ({ categories, month, refetch, setOpen }) => {
     setLoading(true)
     await fetch('/api/transaction/initialize', {
       method: 'POST',
-      body: JSON.stringify({ from: form.yearMonth, to: month, createdAt: moment().unix() })
+      body: JSON.stringify({
+        token: getAuthToken(),
+        from: form.yearMonth,
+        to: month,
+        createdAt: moment().unix()
+      })
     })
     refetch()
     handleClose()

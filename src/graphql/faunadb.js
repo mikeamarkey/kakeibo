@@ -1,12 +1,9 @@
-import faunadb from 'faunadb'
+import faunadb, { Client } from 'faunadb'
 const q = faunadb.query
 
-const client = new faunadb.Client({
-  secret: process.env.FAUNADB_SECRET
-})
-
 function sort (data, collection) {
-  if (!Array.isArray(data) || data.length <= 0 || data.some((set) => {
+  const { token, items } = data
+  if (!Array.isArray(items) || items.length <= 0 || items.some((set) => {
     return !Array.isArray(set) ||
       set.length !== 2 ||
       !set[0].match(/^\d+$/) ||
@@ -15,9 +12,13 @@ function sort (data, collection) {
     return Promise.reject(new Error('Sort data should be an array of arrays of Ref ids and order ints'))
   }
 
+  const client = new Client({
+    secret: token
+  })
+
   return client.query(
     q.Map(
-      data,
+      items,
       q.Lambda(
         ['id', 'order'],
         q.Update(
@@ -33,12 +34,18 @@ function sort (data, collection) {
 }
 
 function createMultiple (data) {
-  const transactions = data.map((t) => {
+  const { token, items } = data
+  const transactions = items.map((t) => {
     return {
       ...t,
       date: q.ToDate(t.date),
-      category: q.Ref(q.Collection('Category'), t.category)
+      category: q.Ref(q.Collection('Category'), t.category),
+      user: q.Ref(q.Collection('User'), t.authId)
     }
+  })
+
+  const client = new Client({
+    secret: token
   })
 
   return client.query(
@@ -57,11 +64,17 @@ function createMultiple (data) {
 }
 
 async function initialize (data) {
+  const { token, from, to, createdAt } = data
+
+  const client = new Client({
+    secret: token
+  })
+
   const result = await client.query(
     q.Map(
       q.Paginate(
         q.Intersection(
-          q.Match(q.Index('getTransactionsByMonth'), data.from),
+          q.Match(q.Index('getTransactionsByMonth'), from),
           q.Union(
             q.Match(q.Index('getTransactionsByType'), 'EXPENSE'),
             q.Match(q.Index('getTransactionsByType'), 'INCOME')
@@ -72,9 +85,9 @@ async function initialize (data) {
     )
   )
 
-  let createdAt = data.createdAt
+  let timestamp = createdAt
   const createItems = result.data.map((item) => {
-    return { ...item.data, month: data.to, createdAt: createdAt++ }
+    return { ...item.data, month: to, createdAt: timestamp++ }
   })
 
   return client.query(
@@ -92,11 +105,25 @@ async function initialize (data) {
   )
 }
 
+function logout (key) {
+  const client = new Client({
+    secret: key
+  })
+
+  return client.query(
+    q.Logout(false)
+  )
+}
+
 async function signup (input) {
   const { email, name, password } = input
   if (!email || !name || !password) {
     return Promise.reject(new Error('Please provide a name, email and password'))
   }
+
+  const client = new Client({
+    secret: process.env.FAUNADB_SECRET
+  })
 
   const result = await client.query(
     q.Create(q.Collection('User'), {
@@ -116,6 +143,10 @@ async function login (input) {
     return Promise.reject(new Error('Please provide an email and a password'))
   }
 
+  const client = new Client({
+    secret: process.env.FAUNADB_SECRET
+  })
+
   const result = await client.query(
     q.Login(
       q.Match(q.Index('getUserByEmail'), email),
@@ -123,16 +154,6 @@ async function login (input) {
     )
   )
   return result
-}
-
-function logout (key) {
-  const client = new faunadb.Client({
-    secret: key
-  })
-
-  return client.query(
-    q.Logout(false)
-  )
 }
 
 export { createMultiple, initialize, login, logout, sort, signup }

@@ -19,12 +19,14 @@ type Transaction {
   order: Int
   price: Int!
   type: TransactionType!
+  user: User
 }
 
 type Category {
   color: String!
   name: String!
   order: Int
+  user: User
 }
 
 type Query {

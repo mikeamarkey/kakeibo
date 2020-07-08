@@ -2,7 +2,7 @@ import Router from 'next/router'
 import { useState } from 'react'
 import { Button, Paper, TextField, makeStyles } from '@material-ui/core'
 import { Subheader } from 'src/components'
-import { setToken } from 'src/lib/auth'
+import { setAuthData } from 'src/lib/auth'
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -33,8 +33,8 @@ const LoginForm = () => {
       method: 'POST',
       body: JSON.stringify(form)
     })
-    const body = await result.json()
-    setToken(body.secret)
+    const authData = await result.json()
+    setAuthData(authData)
     Router.reload()
   }
 

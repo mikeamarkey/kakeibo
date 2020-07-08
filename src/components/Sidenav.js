@@ -8,7 +8,7 @@ import {
   makeStyles
 } from '@material-ui/core'
 import { Category, ExitToApp, Receipt } from '@material-ui/icons'
-import { removeToken, getToken } from 'src/lib/auth'
+import { removeAuthData, getAuthToken } from 'src/lib/auth'
 import { Link } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -28,9 +28,9 @@ const Sidenav = ({ open, setOpen }) => {
   async function handleLogout () {
     await fetch('/api/auth/logout', {
       method: 'POST',
-      body: JSON.stringify(getToken())
+      body: JSON.stringify(getAuthToken())
     })
-    removeToken()
+    removeAuthData()
     Router.reload()
   }
 

@@ -7,7 +7,6 @@ const Logout = async (req, res) => {
   }
 
   const key = await JSON.parse(req.body)
-  console.log(key)
   const result = await logout(key)
   res.json(result)
 }

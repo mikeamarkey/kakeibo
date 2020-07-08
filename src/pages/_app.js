@@ -4,14 +4,14 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ApolloProvider } from '@apollo/client'
 import client from 'src/graphql/apollo'
-import { getToken, AuthContext } from 'src/lib/auth'
+import { getAuthData, AuthContext } from 'src/lib/auth'
 import { Auth, Loading } from 'src/components'
 import theme from 'src/styles/theme'
 import 'src/styles/global.css'
 
 function App ({ Component, pageProps }) {
   const [loading, setLoading] = useState(true)
-  const token = getToken()
+  const authData = getAuthData()
 
   useEffect(() => {
     const jssStyles = document.getElementById('jss-server-side')
@@ -31,18 +31,18 @@ function App ({ Component, pageProps }) {
         <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
       </Head>
 
-      <AuthContext.Provider value={token}>
+      <AuthContext.Provider value={authData}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {loading && (
             <Loading />
           )}
 
-          {!loading && !token && (
+          {!loading && !authData && (
             <Auth />
           )}
 
-          {!loading && token && (
+          {!loading && authData && (
             <ApolloProvider client={client}>
               <Component {...pageProps} />
             </ApolloProvider>
