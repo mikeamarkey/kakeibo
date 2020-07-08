@@ -1,4 +1,4 @@
-import { signup } from 'src/graphql/faunadb'
+import { signup, login } from 'src/graphql/faunadb'
 
 const SignUp = async (req, res) => {
   if (!req.method === 'POST') {
@@ -7,8 +7,9 @@ const SignUp = async (req, res) => {
   }
 
   const input = await JSON.parse(req.body)
-  const result = await signup(input)
-  res.json(result)
+  await signup(input)
+  const loginResult = await login(input)
+  res.json(loginResult)
 }
 
 export default SignUp

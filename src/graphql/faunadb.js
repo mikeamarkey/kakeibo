@@ -125,4 +125,14 @@ async function login (input) {
   return result
 }
 
-export { createMultiple, initialize, login, sort, signup }
+function logout (key) {
+  const client = new faunadb.Client({
+    secret: key
+  })
+
+  return client.query(
+    q.Logout(false)
+  )
+}
+
+export { createMultiple, initialize, login, logout, sort, signup }
