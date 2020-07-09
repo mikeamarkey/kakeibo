@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core'
 import produce from 'immer'
 
+import { getAuthId } from 'src/lib/auth'
 import { CategorySelect, FlexSpacer } from 'src/components'
 import { GET_CATEGORIES, CREATE_CATEGORY, UPDATE_CATEGORY, DELETE_CATEGORY } from 'src/graphql/queries'
 import { colorArray } from 'src/styles/color'
@@ -49,7 +50,7 @@ const CategoryDialog = ({ dialogContent, setDialogContent }) => {
   function handleCreate () {
     createCategory({
       variables: {
-        data: { ...form }
+        data: { ...form, user: { connect: getAuthId() } }
       }
     })
     handleClose()

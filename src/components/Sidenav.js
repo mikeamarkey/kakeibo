@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import {
   Drawer,
   List,
@@ -6,7 +7,8 @@ import {
   ListItemText,
   makeStyles
 } from '@material-ui/core'
-import { Category, Receipt } from '@material-ui/icons'
+import { Category, ExitToApp, Receipt } from '@material-ui/icons'
+import { removeAuthData, getAuthToken } from 'src/lib/auth'
 import { Link } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -23,22 +25,41 @@ const links = [
 const Sidenav = ({ open, setOpen }) => {
   const css = useStyles()
 
+  async function handleLogout () {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify(getAuthToken())
+    })
+    removeAuthData()
+    Router.reload()
+  }
+
   return (
     <Drawer anchor='left' open={open} onClose={() => setOpen(false)}>
       <List className={css.list}>
-        {links.map(({ url, label, icon }) => (
+        {links.map(({ url, label, icon }, idx) => (
           <ListItem
             key={url}
-            underline='none'
             color='textPrimary'
             button
             component={Link}
             href={url}
+            divider={idx === links.length - 1}
           >
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText primary={label} />
           </ListItem>
         ))}
+
+        <ListItem
+          color='textPrimary'
+          button
+          onClick={() => handleLogout()}
+        >
+          <ListItemIcon><ExitToApp /></ListItemIcon>
+          <ListItemText primary='Logout' />
+        </ListItem>
+
       </List>
     </Drawer>
   )

@@ -4,6 +4,11 @@ enum TransactionType {
   EXPENSE
 }
 
+type User {
+  name: String!
+  email: String! @unique
+}
+
 type Transaction {
   category: Category @relation
   createdAt: Int!
@@ -14,12 +19,14 @@ type Transaction {
   order: Int
   price: Int!
   type: TransactionType!
+  user: User
 }
 
 type Category {
   color: String!
   name: String!
   order: Int
+  user: User
 }
 
 type Query {
@@ -27,4 +34,5 @@ type Query {
   getTransactions: [Transaction!]!
   getTransactionsByMonth(month: String!): [Transaction!]!
   getTransactionsByType(type: TransactionType!): [Transaction!]!
+  getUserByEmail(email: String!): User!
 }
