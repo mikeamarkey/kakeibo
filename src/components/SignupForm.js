@@ -1,6 +1,6 @@
 import Router from 'next/router'
 import { useState } from 'react'
-import { Button, Paper, TextField, makeStyles } from '@material-ui/core'
+import { Button, Paper, TextField, Typography, makeStyles } from '@material-ui/core'
 import { Subheader } from 'src/components'
 import { setAuthData } from 'src/lib/auth'
 
@@ -12,12 +12,16 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   submit: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: `${theme.spacing(1)}px 0`,
     textAlign: 'right'
   }
 }))
 
-const SignupForm = () => {
+const SignupForm = ({ setLoading }) => {
+  const [error, setError] = useState('')
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -27,21 +31,35 @@ const SignupForm = () => {
   const css = useStyles()
 
   function handleFormChange (event, prop) {
+    if (error.length > 0) {
+      setError('')
+    }
     setForm({ ...form, [prop]: event.target.value })
   }
 
   async function handleSubmit () {
+    setLoading(true)
     const { passwordConfirm, ...data } = form
-    const result = await fetch('/api/auth/signup', {
+    const response = await fetch('/api/auth/signup', {
       method: 'POST',
       body: JSON.stringify(data)
     })
-    const authData = await result.json()
-    setAuthData(authData)
-    Router.reload()
+    if (response.status < 300) {
+      const authData = await response.json()
+      setAuthData(authData)
+      Router.reload()
+    } else {
+      setLoading(false)
+      if (response.status === 409) {
+        setError('This email is already in use.')
+      } else {
+        setError('An unexpected error occurred.')
+      }
+    }
   }
 
-  const disabled = form.password !== form.passwordConfirm ||
+  const disabled = error.length > 0 ||
+    form.password !== form.passwordConfirm ||
     Object.keys(form).some((key) => !form[key])
 
   return (
@@ -84,6 +102,10 @@ const SignupForm = () => {
           />
 
           <div className={css.submit}>
+            <Typography color='error' variant='subtitle2'>
+              {error}
+            </Typography>
+
             <Button
               color='primary'
               disabled={disabled}

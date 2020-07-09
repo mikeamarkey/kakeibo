@@ -12,8 +12,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%'
   },
   dim: {
-    opacity: 0.5,
-    backgroundColor: theme.palette.common.white
+    backgroundColor: 'rgba(255, 255, 255, .5)'
   },
   loading: {
     position: 'absolute',

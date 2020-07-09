@@ -7,9 +7,17 @@ const Login = async (req, res) => {
   }
 
   const input = await JSON.parse(req.body)
-  const result = await login(input)
-  const authData = { token: result.secret, id: result.instance.id }
-  res.json(authData)
+  try {
+    const result = await login(input)
+    const authData = { token: result.secret, id: result.instance.id }
+    res.json(authData)
+  } catch (e) {
+    if (e.message === 'authentication failed') {
+      res.status(401).end()
+    } else {
+      res.status(400).end()
+    }
+  }
 }
 
 export default Login
