@@ -16,6 +16,7 @@ import { AddCircleOutline, RemoveCircleOutline } from '@material-ui/icons'
 import moment from 'moment'
 import produce from 'immer'
 
+import { getAuthToken, getAuthId } from 'src/lib/auth'
 import { CategorySelect, Loading } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
@@ -62,12 +63,12 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
     setLoading(true)
     const { transactions, total, ...shared } = form
     const data = transactions.map((transaction) => {
-      return { ...transaction, ...shared }
+      return { ...transaction, ...shared, authId: getAuthId() }
     })
 
     const result = await fetch('/api/transaction/createMultiple', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify({ token: getAuthToken(), items: data })
     })
     const created = await result.json()
 

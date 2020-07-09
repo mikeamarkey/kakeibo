@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Head from 'next/head'
 import { makeStyles } from '@material-ui/core'
 
+import { AuthContext } from 'src/lib/auth'
 import { Header, Sidenav } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Layout = ({ children, headerElements, title }) => {
   const css = useStyles()
+  const authContext = useContext(AuthContext)
   const [open, setOpen] = useState(false)
 
   return (
@@ -41,7 +43,9 @@ const Layout = ({ children, headerElements, title }) => {
         </div>
       </div>
 
-      <Sidenav open={open} setOpen={setOpen} />
+      {authContext && (
+        <Sidenav open={open} setOpen={setOpen} />
+      )}
     </>
   )
 }
