@@ -16,7 +16,7 @@ import { AddCircleOutline, RemoveCircleOutline } from '@material-ui/icons'
 import moment from 'moment'
 import produce from 'immer'
 
-import { getAuthToken, getAuthId } from 'src/lib/auth'
+import { getAuthId } from 'src/lib/auth'
 import { CategorySelect, Loading } from 'src/components'
 import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
 
@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
+  const [createMultipleTransactions] = useMutation(CREATE_MULTIPLE_TRANSACTIONS)
   const [loading, setLoading] = useState(false)
   const client = useApolloClient()
   const css = useStyles()
@@ -62,34 +63,36 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
   async function handleCreate () {
     setLoading(true)
     const { transactions, total, ...shared } = form
-    const data = transactions.map((transaction) => {
-      return { ...transaction, ...shared, authId: getAuthId() }
+    const authId = getAuthId()
+    const input = transactions.map((transaction) => {
+      return {
+        ...transaction,
+        ...shared,
+        category: { connect: transaction.category },
+        user: { connect: authId }
+      }
     })
+    createMultipleTransactions({ variables: { input } })
 
-    const result = await fetch('/api/transaction/createMultiple', {
-      method: 'POST',
-      body: JSON.stringify({ token: getAuthToken(), items: data })
-    })
-    const created = await result.json()
-
-    try {
-      const variables = { month: form.month }
-      const cache = client.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
-      const data = produce(cache, (draft) => {
-        [...created].forEach((transaction) => {
-          const category = categories.find((c) => c._id === transaction.category)
-          draft.getTransactionsByMonth.data.push({
-            __typename: 'Transaction',
-            ...transaction,
-            category: { ...category }
-          })
-        })
-      })
-      client.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
-    } catch (e) {
-      console.log('Skipping writing to nonexistent cache.')
-    }
-    handleClose()
+    setLoading(false)
+    // try {
+    //   const variables = { month: form.month }
+    //   const cache = client.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+    //   const data = produce(cache, (draft) => {
+    //     [...created].forEach((transaction) => {
+    //       const category = categories.find((c) => c._id === transaction.category)
+    //       draft.getTransactionsByMonth.data.push({
+    //         __typename: 'Transaction',
+    //         ...transaction,
+    //         category: { ...category }
+    //       })
+    //     })
+    //   })
+    //   client.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+    // } catch (e) {
+    //   console.log('Skipping writing to nonexistent cache.')
+    // }
+    // handleClose()
   }
 
   function handleClose () {

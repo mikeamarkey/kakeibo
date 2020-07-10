@@ -62,6 +62,29 @@ export const CREATE_TRANSACTION = gql`
   }
 `
 
+export const CREATE_TRANSACTIONS = gql`
+  mutation createTransactions($input: [TransactionInput!]!) {
+    createTransactions(input: $input) {
+      _id
+      _ts
+      category {
+        _id
+        color
+        name
+        order
+      }
+      createdAt
+      date
+      month
+      name
+      note
+      order
+      price
+      type
+    }
+  }
+`
+
 export const UPDATE_TRANSACTION = gql`
   mutation partialUpdateTransaction($id: ID!, $data: PartialUpdateTransactionInput!) {
     updateTransaction: partialUpdateTransaction(id: $id, data: $data) {
@@ -81,6 +104,15 @@ export const UPDATE_TRANSACTION = gql`
       order
       price
       type
+    }
+  }
+`
+
+export const SORT_TRANSACTIONS = gql`
+  mutation sortTransactions($input: [SortInput!]!) {
+    sortTransactions(input: $input) {
+      _id
+      order
     }
   }
 `
@@ -117,8 +149,17 @@ export const UPDATE_CATEGORY = gql`
   }
 `
 
+export const SORT_CATEGORIES = gql`
+  mutation sortCategories($input: [SortInput!]!) {
+    sortCategories(input: $input) {
+      _id
+      order
+    }
+  }
+`
+
 export const DELETE_CATEGORY = gql`
-  mutation deleteCategorfy($id: ID!) {
+  mutation deleteCategory($id: ID!) {
     deleteCategory(id: $id) {
       _id
     }

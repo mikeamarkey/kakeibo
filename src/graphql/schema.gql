@@ -29,10 +29,21 @@ type Category {
   user: User
 }
 
+input SortInput {
+  id: ID!
+  order: Int!
+}
+
 type Query {
   getCategories: [Category!]!
   getTransactions: [Transaction!]!
   getTransactionsByMonth(month: String!): [Transaction!]!
   getTransactionsByType(type: TransactionType!): [Transaction!]!
   getUserByEmail(email: String!): User!
+}
+
+type Mutation {
+  createTransactions(input: [TransactionInput!]!): [Transaction!]! @resolver(name: "createTransactions")
+  sortCategories(input: [SortInput!]!): [Category!]! @resolver(name: "sortCategories")
+  sortTransactions(input: [SortInput!]!): [Transaction!]! @resolver(name: "sortTransactions")
 }

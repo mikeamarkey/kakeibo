@@ -1,6 +1,7 @@
+import { useMutation } from '@apollo/client'
 import { makeStyles } from '@material-ui/core'
 import { Category, Row, SortableList } from 'src/components'
-import { GET_CATEGORIES } from 'src/graphql/queries'
+import { SORT_CATEGORIES } from 'src/graphql/queries'
 import { getUnusedColor } from 'src/styles/color'
 
 const useStyles = makeStyles((theme) => ({
@@ -10,7 +11,21 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const CategoryList = ({ categories, setDialogContent }) => {
+  const [sortCategories] = useMutation(SORT_CATEGORIES)
   const css = useStyles()
+
+  function handleSort (updateItems) {
+    sortCategories({
+      variables: {
+        input: updateItems.map(({ _id, order }) => {
+          return { id: _id, order }
+        })
+      },
+      optimisticResponse: {
+        sortCategories: updateItems
+      }
+    })
+  }
 
   return (
     <>
@@ -40,9 +55,7 @@ const CategoryList = ({ categories, setDialogContent }) => {
             />
           </Row>
         )}
-        query={GET_CATEGORIES}
-        variables={{}}
-        url='/api/category/sort'
+        handleSort={handleSort}
       />
     </>
   )

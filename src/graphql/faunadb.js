@@ -1,38 +1,6 @@
 import faunadb, { Client } from 'faunadb'
 const q = faunadb.query
 
-function sort (data, collection) {
-  const { token, items } = data
-  if (!Array.isArray(items) || items.length <= 0 || items.some((set) => {
-    return !Array.isArray(set) ||
-      set.length !== 2 ||
-      !set[0].match(/^\d+$/) ||
-      !Number.isInteger(set[1])
-  })) {
-    return Promise.reject(new Error('Sort data should be an array of arrays of Ref ids and order ints'))
-  }
-
-  const client = new Client({
-    secret: token
-  })
-
-  return client.query(
-    q.Map(
-      items,
-      q.Lambda(
-        ['id', 'order'],
-        q.Update(
-          q.Ref(q.Collection(collection), q.Var('id')), {
-            data: {
-              order: q.Var('order')
-            }
-          }
-        )
-      )
-    )
-  )
-}
-
 function createMultiple (data) {
   const { token, items } = data
   const transactions = items.map((t) => {
@@ -156,4 +124,4 @@ async function login (input) {
   return result
 }
 
-export { createMultiple, initialize, login, logout, sort, signup }
+export { createMultiple, initialize, login, logout, signup }
