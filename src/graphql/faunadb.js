@@ -1,36 +1,6 @@
 import faunadb, { Client } from 'faunadb'
 const q = faunadb.query
 
-function createMultiple (data) {
-  const { token, items } = data
-  const transactions = items.map((t) => {
-    return {
-      ...t,
-      date: q.ToDate(t.date),
-      category: q.Ref(q.Collection('Category'), t.category),
-      user: q.Ref(q.Collection('User'), t.authId)
-    }
-  })
-
-  const client = new Client({
-    secret: token
-  })
-
-  return client.query(
-    q.Map(
-      transactions,
-      q.Lambda(
-        'data',
-        q.Create(
-          q.Collection('Transaction'), {
-            data: q.Var('data')
-          }
-        )
-      )
-    )
-  )
-}
-
 async function initialize (data) {
   const { token, from, to, createdAt } = data
 
@@ -124,4 +94,4 @@ async function login (input) {
   return result
 }
 
-export { createMultiple, initialize, login, logout, signup }
+export { initialize, login, logout, signup }

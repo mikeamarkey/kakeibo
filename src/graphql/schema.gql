@@ -10,7 +10,7 @@ type User {
 }
 
 type Transaction {
-  category: Category @relation
+  category: Category
   createdAt: Int!
   date: Date
   month: String!
@@ -19,19 +19,32 @@ type Transaction {
   order: Int
   price: Int!
   type: TransactionType!
-  user: User
+  user: User!
 }
 
 type Category {
   color: String!
   name: String!
   order: Int
-  user: User
+  user: User!
 }
 
 input SortInput {
   id: ID!
   order: Int!
+}
+
+input LocalTransactionInput {
+  category: ID
+  createdAt: Int!
+  date: Date
+  month: String!
+  name: String
+  note: String
+  order: Int
+  price: Int!
+  type: TransactionType!
+  user: ID!
 }
 
 type Query {
@@ -43,7 +56,7 @@ type Query {
 }
 
 type Mutation {
-  createTransactions(input: [TransactionInput!]!): [Transaction!]! @resolver(name: "createTransactions")
-  sortCategories(input: [SortInput!]!): [Category!]! @resolver(name: "sortCategories")
-  sortTransactions(input: [SortInput!]!): [Transaction!]! @resolver(name: "sortTransactions")
+  createTransactions(input: [LocalTransactionInput!]!): [Transaction!]! @resolver
+  sortCategories(input: [SortInput!]!): [Category!]! @resolver
+  sortTransactions(input: [SortInput!]!): [Transaction!]! @resolver
 }

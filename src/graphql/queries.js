@@ -63,7 +63,7 @@ export const CREATE_TRANSACTION = gql`
 `
 
 export const CREATE_TRANSACTIONS = gql`
-  mutation createTransactions($input: [TransactionInput!]!) {
+  mutation createTransactions($input: [LocalTransactionInput!]!) {
     createTransactions(input: $input) {
       _id
       _ts

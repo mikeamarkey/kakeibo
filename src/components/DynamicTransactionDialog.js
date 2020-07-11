@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   Button,
   Dialog,
@@ -18,7 +18,7 @@ import produce from 'immer'
 
 import { getAuthId } from 'src/lib/auth'
 import { CategorySelect, Loading } from 'src/components'
-import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTIONS } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -50,10 +50,22 @@ const useStyles = makeStyles((theme) => ({
 
 const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
-  const [createMultipleTransactions] = useMutation(CREATE_MULTIPLE_TRANSACTIONS)
   const [loading, setLoading] = useState(false)
-  const client = useApolloClient()
   const css = useStyles()
+  const [createTransactions] = useMutation(CREATE_TRANSACTIONS, {
+    update (store, { data: { createTransactions } }) {
+      try {
+        const variables = { month: form.month }
+        const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+        const data = produce(cache, (draft) => {
+          draft.getTransactionsByMonth.data = [...draft.getTransactionsByMonth.data, ...createTransactions]
+        })
+        store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+      } catch (e) {
+        console.log('Skipping writing to nonexistent cache.')
+      }
+    }
+  })
 
   function handleDateChange (date) {
     const month = moment(date).format('YYYYMM')
@@ -68,31 +80,11 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
       return {
         ...transaction,
         ...shared,
-        category: { connect: transaction.category },
-        user: { connect: authId }
+        user: authId
       }
     })
-    createMultipleTransactions({ variables: { input } })
-
-    setLoading(false)
-    // try {
-    //   const variables = { month: form.month }
-    //   const cache = client.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
-    //   const data = produce(cache, (draft) => {
-    //     [...created].forEach((transaction) => {
-    //       const category = categories.find((c) => c._id === transaction.category)
-    //       draft.getTransactionsByMonth.data.push({
-    //         __typename: 'Transaction',
-    //         ...transaction,
-    //         category: { ...category }
-    //       })
-    //     })
-    //   })
-    //   client.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
-    // } catch (e) {
-    //   console.log('Skipping writing to nonexistent cache.')
-    // }
-    // handleClose()
+    createTransactions({ variables: { input } })
+    handleClose()
   }
 
   function handleClose () {
