@@ -1,4 +1,5 @@
 import Router from 'next/router'
+import { useMutation } from '@apollo/client'
 import {
   Drawer,
   List,
@@ -8,7 +9,8 @@ import {
   makeStyles
 } from '@material-ui/core'
 import { Category, ExitToApp, Receipt } from '@material-ui/icons'
-import { removeAuthData, getAuthToken } from 'src/lib/auth'
+import { LOGOUT } from 'src/graphql/queries'
+import { removeAuthData } from 'src/lib/auth'
 import { Link } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -24,15 +26,12 @@ const links = [
 
 const Sidenav = ({ open, setOpen }) => {
   const css = useStyles()
-
-  async function handleLogout () {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      body: JSON.stringify(getAuthToken())
-    })
-    removeAuthData()
-    Router.reload()
-  }
+  const [logout] = useMutation(LOGOUT, {
+    update (store, { data: { logout } }) {
+      removeAuthData()
+      Router.reload()
+    }
+  })
 
   return (
     <Drawer anchor='left' open={open} onClose={() => setOpen(false)}>
@@ -54,7 +53,7 @@ const Sidenav = ({ open, setOpen }) => {
         <ListItem
           color='textPrimary'
           button
-          onClick={() => handleLogout()}
+          onClick={() => logout()}
         >
           <ListItemIcon><ExitToApp /></ListItemIcon>
           <ListItemText primary='Logout' />

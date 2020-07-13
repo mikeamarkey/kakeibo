@@ -1,9 +1,10 @@
 import { IconButton, makeStyles } from '@material-ui/core'
 import { AddCircleOutline } from '@material-ui/icons'
+import { useMutation } from '@apollo/client'
 import moment from 'moment'
 
 import { CategorySummary, Price, SortableList, Subheader, Transaction } from 'src/components'
-import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+import { SORT_TRANSACTIONS } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   create: {
@@ -18,11 +19,25 @@ const MonthlyTransactions = ({
   setFilter,
   setTab
 }) => {
+  const [sortTransactions] = useMutation(SORT_TRANSACTIONS)
   const css = useStyles()
   const groups = [
     { label: 'Income', ...monthly.income, type: 'INCOME' },
     { label: 'Expense', ...monthly.expense, type: 'EXPENSE' }
   ]
+
+  function handleSort (updateItems) {
+    sortTransactions({
+      variables: {
+        input: updateItems.map(({ _id, order }) => {
+          return { id: _id, order }
+        })
+      },
+      optimisticResponse: {
+        sortTransactions: updateItems
+      }
+    })
+  }
 
   return (
     <>
@@ -46,9 +61,7 @@ const MonthlyTransactions = ({
                   }}
                 />
               )}
-              query={GET_TRANSACTIONS_BY_MONTH}
-              variables={{ month }}
-              url='/api/transaction/sort'
+              handleSort={handleSort}
             />
 
             <div className={css.create}>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMutation } from '@apollo/client'
 import {
   Button,
   Dialog,
@@ -12,8 +13,9 @@ import {
   makeStyles
 } from '@material-ui/core'
 import moment from 'moment'
+import produce from 'immer'
 
-import { getAuthToken } from 'src/lib/auth'
+import { GET_TRANSACTIONS_BY_MONTH, COPY_MONTHLY_TRANSACTIONS } from 'src/graphql/queries'
 import { Loading } from 'src/components'
 
 const useStyles = makeStyles((theme) => ({
@@ -22,23 +24,37 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const InitializeDialog = ({ categories, month, refetch, setOpen }) => {
+const CopyMonthlyTransactionsDialog = ({ categories, month, setOpen }) => {
+  const [copyMonthlyTransactions] = useMutation(COPY_MONTHLY_TRANSACTIONS, {
+    update (store, { data: { copyMonthlyTransactions } }) {
+      try {
+        const variables = { month: month }
+        const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+        const data = produce(cache, (draft) => {
+          draft.getTransactionsByMonth.data = [
+            ...draft.getTransactionsByMonth.data,
+            ...copyMonthlyTransactions
+          ]
+        })
+        store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+      } catch (e) {
+        console.log('Skipping writing to nonexistent cache.')
+      }
+    }
+  })
   const [form, setForm] = useState({ yearMonth: moment(month).subtract(1, 'month').format('YYYYMM') })
   const [loading, setLoading] = useState(false)
   const css = useStyles()
 
   async function handleCreate () {
     setLoading(true)
-    await fetch('/api/transaction/initialize', {
-      method: 'POST',
-      body: JSON.stringify({
-        token: getAuthToken(),
+    copyMonthlyTransactions({
+      variables: {
         from: form.yearMonth,
         to: month,
         createdAt: moment().unix()
-      })
+      }
     })
-    refetch()
     handleClose()
   }
 
@@ -97,4 +113,4 @@ const InitializeDialog = ({ categories, month, refetch, setOpen }) => {
   )
 }
 
-export default InitializeDialog
+export default CopyMonthlyTransactionsDialog
