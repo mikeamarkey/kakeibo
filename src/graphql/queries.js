@@ -85,6 +85,29 @@ export const CREATE_TRANSACTIONS = gql`
   }
 `
 
+export const COPY_MONTHLY_TRANSACTIONS = gql`
+  mutation copyMonthlyTransactions($from: String!, $to: String!, $createdAt: Int!) {
+    copyMonthlyTransactions(from: $from, to: $to, createdAt: $createdAt) {
+      _id
+      _ts
+      category {
+        _id
+        color
+        name
+        order
+      }
+      createdAt
+      date
+      month
+      name
+      note
+      order
+      price
+      type
+    }
+  }
+`
+
 export const UPDATE_TRANSACTION = gql`
   mutation partialUpdateTransaction($id: ID!, $data: PartialUpdateTransactionInput!) {
     updateTransaction: partialUpdateTransaction(id: $id, data: $data) {

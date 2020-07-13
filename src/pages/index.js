@@ -14,7 +14,7 @@ const Index = () => {
   const [filter, setFilter] = useState({ category: [] })
   const [month, setMonth] = useState(moment().format('YYYYMM'))
   const [tab, setTab] = useState(0)
-  const { data: dataT, loading: loadingT, refetch: refetchT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
+  const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
   const { data: dataC } = useQuery(GET_CATEGORIES)
@@ -39,7 +39,6 @@ const Index = () => {
           setFilter={setFilter}
           setTab={setTab}
           transactions={transactions}
-          refetch={refetchT}
         />
       )}
     </Layout>

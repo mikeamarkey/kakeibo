@@ -1,48 +1,6 @@
 import faunadb, { Client } from 'faunadb'
 const q = faunadb.query
 
-async function initialize (data) {
-  const { token, from, to, createdAt } = data
-
-  const client = new Client({
-    secret: token
-  })
-
-  const result = await client.query(
-    q.Map(
-      q.Paginate(
-        q.Intersection(
-          q.Match(q.Index('getTransactionsByMonth'), from),
-          q.Union(
-            q.Match(q.Index('getTransactionsByType'), 'EXPENSE'),
-            q.Match(q.Index('getTransactionsByType'), 'INCOME')
-          )
-        )
-      ),
-      q.Lambda('x', q.Get(q.Var('x')))
-    )
-  )
-
-  let timestamp = createdAt
-  const createItems = result.data.map((item) => {
-    return { ...item.data, month: to, createdAt: timestamp++ }
-  })
-
-  return client.query(
-    q.Map(
-      createItems,
-      q.Lambda(
-        'data',
-        q.Create(
-          q.Collection('Transaction'), {
-            data: q.Var('data')
-          }
-        )
-      )
-    )
-  )
-}
-
 function logout (key) {
   const client = new Client({
     secret: key
@@ -94,4 +52,4 @@ async function login (input) {
   return result
 }
 
-export { initialize, login, logout, signup }
+export { login, logout, signup }
