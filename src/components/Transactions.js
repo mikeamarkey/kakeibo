@@ -13,9 +13,9 @@ import { HighlightOff } from '@material-ui/icons'
 import moment from 'moment'
 import {
   CategorySelect,
+  CopyMonthlyTransactionsDialog,
   DailyTransactions,
   FlexSpacer,
-  InitializeDialog,
   MonthlyTransactions,
   Price,
   TransactionDialog
@@ -37,9 +37,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Transactions = ({ categories, filter, month, refetch, tab, setTab, setFilter, transactions }) => {
+const Transactions = ({ categories, filter, month, tab, setTab, setFilter, transactions }) => {
   const [dialogContent, setDialogContent] = useState(null)
-  const [openInitializeDialog, setOpenInitializeDialog] = useState(false)
+  const [openCopyDialog, setOpenCopyDialog] = useState(false)
   const css = useStyles()
 
   const daily = transactions.reduce((acc, transaction) => {
@@ -93,7 +93,7 @@ const Transactions = ({ categories, filter, month, refetch, tab, setTab, setFilt
     expense: { total: 0, transactions: [] }
   }), [transactions])
 
-  const canInitialize = !monthly.income.total || !monthly.expense.total
+  const canCopy = !monthly.income.total && !monthly.expense.total
 
   const getTotal = () => {
     if (tab === 0) {
@@ -146,9 +146,9 @@ const Transactions = ({ categories, filter, month, refetch, tab, setTab, setFilt
           </>
         )}
 
-        {tab === 1 && canInitialize && (
-          <Button onClick={() => setOpenInitializeDialog(true)}>
-            Initialize Monthly
+        {tab === 1 && canCopy && (
+          <Button onClick={() => setOpenCopyDialog(true)}>
+            Copy Monthly
           </Button>
         )}
 
@@ -190,12 +190,11 @@ const Transactions = ({ categories, filter, month, refetch, tab, setTab, setFilt
         />
       )}
 
-      {tab === 1 && openInitializeDialog && (
-        <InitializeDialog
+      {tab === 1 && openCopyDialog && (
+        <CopyMonthlyTransactionsDialog
           categories={categories}
           month={month}
-          refetch={refetch}
-          setOpen={setOpenInitializeDialog}
+          setOpen={setOpenCopyDialog}
         />
       )}
     </>

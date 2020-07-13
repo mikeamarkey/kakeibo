@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   Button,
   Dialog,
@@ -16,9 +16,9 @@ import { AddCircleOutline, RemoveCircleOutline } from '@material-ui/icons'
 import moment from 'moment'
 import produce from 'immer'
 
-import { getAuthToken, getAuthId } from 'src/lib/auth'
+import { getAuthId } from 'src/lib/auth'
 import { CategorySelect, Loading } from 'src/components'
-import { GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+import { GET_TRANSACTIONS_BY_MONTH, CREATE_TRANSACTIONS } from 'src/graphql/queries'
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -51,8 +51,21 @@ const useStyles = makeStyles((theme) => ({
 const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogContent }) => {
   const [form, setForm] = useState(dialogContent)
   const [loading, setLoading] = useState(false)
-  const client = useApolloClient()
   const css = useStyles()
+  const [createTransactions] = useMutation(CREATE_TRANSACTIONS, {
+    update (store, { data: { createTransactions } }) {
+      try {
+        const variables = { month: form.month }
+        const cache = store.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
+        const data = produce(cache, (draft) => {
+          draft.getTransactionsByMonth.data = [...draft.getTransactionsByMonth.data, ...createTransactions]
+        })
+        store.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
+      } catch (e) {
+        console.log('Skipping writing to nonexistent cache.')
+      }
+    }
+  })
 
   function handleDateChange (date) {
     const month = moment(date).format('YYYYMM')
@@ -62,33 +75,15 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
   async function handleCreate () {
     setLoading(true)
     const { transactions, total, ...shared } = form
-    const data = transactions.map((transaction) => {
-      return { ...transaction, ...shared, authId: getAuthId() }
+    const authId = getAuthId()
+    const input = transactions.map((transaction) => {
+      return {
+        ...transaction,
+        ...shared,
+        user: authId
+      }
     })
-
-    const result = await fetch('/api/transaction/createMultiple', {
-      method: 'POST',
-      body: JSON.stringify({ token: getAuthToken(), items: data })
-    })
-    const created = await result.json()
-
-    try {
-      const variables = { month: form.month }
-      const cache = client.readQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables })
-      const data = produce(cache, (draft) => {
-        [...created].forEach((transaction) => {
-          const category = categories.find((c) => c._id === transaction.category)
-          draft.getTransactionsByMonth.data.push({
-            __typename: 'Transaction',
-            ...transaction,
-            category: { ...category }
-          })
-        })
-      })
-      client.writeQuery({ query: GET_TRANSACTIONS_BY_MONTH, variables, data })
-    } catch (e) {
-      console.log('Skipping writing to nonexistent cache.')
-    }
+    createTransactions({ variables: { input } })
     handleClose()
   }
 
@@ -274,7 +269,7 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
               setForm({
                 ...form,
                 transactions: [
-                  ...form.transactions, { category: '', note: '', price: '' }
+                  ...form.transactions, { category: '', note: '', price: remaining }
                 ]
               })
             }}

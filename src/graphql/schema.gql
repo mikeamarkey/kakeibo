@@ -10,7 +10,7 @@ type User {
 }
 
 type Transaction {
-  category: Category @relation
+  category: Category
   createdAt: Int!
   date: Date
   month: String!
@@ -19,14 +19,32 @@ type Transaction {
   order: Int
   price: Int!
   type: TransactionType!
-  user: User
+  user: User!
 }
 
 type Category {
   color: String!
   name: String!
   order: Int
-  user: User
+  user: User!
+}
+
+input SortInput {
+  id: ID!
+  order: Int!
+}
+
+input LocalTransactionInput {
+  category: ID
+  createdAt: Int!
+  date: Date
+  month: String!
+  name: String
+  note: String
+  order: Int
+  price: Int!
+  type: TransactionType!
+  user: ID!
 }
 
 type Query {
@@ -35,4 +53,12 @@ type Query {
   getTransactionsByMonth(month: String!): [Transaction!]!
   getTransactionsByType(type: TransactionType!): [Transaction!]!
   getUserByEmail(email: String!): User!
+}
+
+type Mutation {
+  copyMonthlyTransactions(from: String!, to: String!, createdAt: Int!): [Transaction!]! @resolver
+  createTransactions(input: [LocalTransactionInput!]!): [Transaction!]! @resolver
+  logout: Boolean! @resolver
+  sortCategories(input: [SortInput!]!): [Category!]! @resolver
+  sortTransactions(input: [SortInput!]!): [Transaction!]! @resolver
 }
