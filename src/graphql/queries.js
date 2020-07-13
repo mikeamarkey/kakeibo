@@ -188,3 +188,9 @@ export const DELETE_CATEGORY = gql`
     }
   }
 `
+
+export const LOGOUT = gql`
+  mutation logout {
+    logout
+  }
+`

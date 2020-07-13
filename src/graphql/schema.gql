@@ -58,6 +58,7 @@ type Query {
 type Mutation {
   copyMonthlyTransactions(from: String!, to: String!, createdAt: Int!): [Transaction!]! @resolver
   createTransactions(input: [LocalTransactionInput!]!): [Transaction!]! @resolver
+  logout: Boolean! @resolver
   sortCategories(input: [SortInput!]!): [Category!]! @resolver
   sortTransactions(input: [SortInput!]!): [Transaction!]! @resolver
 }

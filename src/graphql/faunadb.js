@@ -1,25 +1,15 @@
 import faunadb, { Client } from 'faunadb'
 const q = faunadb.query
 
-function logout (key) {
-  const client = new Client({
-    secret: key
-  })
-
-  return client.query(
-    q.Logout(false)
-  )
-}
+const client = new Client({
+  secret: process.env.FAUNADB_SECRET
+})
 
 async function signup (input) {
   const { email, name, password } = input
   if (!email || !name || !password) {
     return Promise.reject(new Error('Please provide a name, email and password'))
   }
-
-  const client = new Client({
-    secret: process.env.FAUNADB_SECRET
-  })
 
   const result = await client.query(
     q.Create(q.Collection('User'), {
@@ -39,10 +29,6 @@ async function login (input) {
     return Promise.reject(new Error('Please provide an email and a password'))
   }
 
-  const client = new Client({
-    secret: process.env.FAUNADB_SECRET
-  })
-
   const result = await client.query(
     q.Login(
       q.Match(q.Index('getUserByEmail'), email),
@@ -52,4 +38,4 @@ async function login (input) {
   return result
 }
 
-export { login, logout, signup }
+export { login, signup }
