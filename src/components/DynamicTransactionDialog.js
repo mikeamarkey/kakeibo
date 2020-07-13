@@ -269,7 +269,7 @@ const DynamicTransactionDialog = ({ categories, month, dialogContent, setDialogC
               setForm({
                 ...form,
                 transactions: [
-                  ...form.transactions, { category: '', note: '', price: '' }
+                  ...form.transactions, { category: '', note: '', price: remaining }
                 ]
               })
             }}
