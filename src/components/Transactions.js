@@ -95,7 +95,7 @@ const Transactions = ({ categories, filter, month, tab, setTab, setFilter, trans
 
   const canCopy = !monthly.income.total && !monthly.expense.total
 
-  const getTotal = () => {
+  function getTotal () {
     if (tab === 0) {
       return daily.total
     } else {
