@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import moment from 'moment'
 
@@ -9,11 +10,15 @@ import {
   Transactions
 } from 'src/components'
 import { GET_CATEGORIES, GET_TRANSACTIONS_BY_MONTH } from 'src/graphql/queries'
+import { getInitialRouteState } from 'src/lib/routes'
 
 const Index = () => {
+  const router = useRouter()
+  const initialState = getInitialRouteState('index', router.query)
   const [filter, setFilter] = useState({ category: [] })
-  const [month, setMonth] = useState(moment().format('YYYYMM'))
-  const [tab, setTab] = useState(0)
+  const [month, setMonth] = useState(initialState.month)
+  const [tab, setTab] = useState(initialState.tab)
+
   const { data: dataT, loading: loadingT } = useQuery(GET_TRANSACTIONS_BY_MONTH, {
     variables: { month }
   })
@@ -27,7 +32,10 @@ const Index = () => {
     : []
 
   return (
-    <Layout headerElements={<IndexAppBar month={month} setMonth={setMonth} />}>
+    <Layout
+      title={moment(month).format('YYYY/MM')}
+      headerElements={<IndexAppBar month={month} setMonth={setMonth} />}
+    >
       {loadingT ? (
         <Loading />
       ) : (
