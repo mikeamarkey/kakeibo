@@ -2,7 +2,6 @@ import { Button, IconButton } from '@material-ui/core'
 import { ArrowBack, ArrowForward } from '@material-ui/icons'
 import moment from 'moment'
 
-import { setRoute } from 'src/lib/routes'
 import { FlexSpacer } from 'src/components'
 
 const IndexAppBar = ({ month, setMonth, transactions }) => {
@@ -12,8 +11,6 @@ const IndexAppBar = ({ month, setMonth, transactions }) => {
 
   function onMonthChange (newMonth) {
     setMonth(newMonth)
-    const query = { month: moment().format('YYYYMM') === newMonth ? null : newMonth }
-    setRoute('index', query)
   }
 
   return (

@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core'
 import { HighlightOff } from '@material-ui/icons'
 import moment from 'moment'
-import { setRoute } from 'src/lib/routes'
 import {
   CategorySelect,
   CopyMonthlyTransactionsDialog,
@@ -104,17 +103,11 @@ const Transactions = ({ categories, filter, month, tab, setTab, setFilter, trans
     }
   }
 
-  function handleTabChange (newTab) {
-    setTab(newTab)
-    const query = { tab: newTab === 1 ? 'monthly' : null }
-    setRoute('index', query)
-  }
-
   return (
     <>
       <Tabs
         value={tab}
-        onChange={(e, newTab) => handleTabChange(newTab)}
+        onChange={(e, newTab) => setTab(newTab)}
         indicatorColor='primary'
         textColor='primary'
         variant='fullWidth'

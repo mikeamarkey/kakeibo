@@ -28,16 +28,18 @@ function setRoute (page, query = {}) {
         }
         return acc
       }, []).join('&')
-      return Router.push(newQuery.length <= 0 ? '/' : `/?${newQuery}`, undefined, { shallow: true })
+      const path = newQuery.length <= 0 ? '/' : `/?${newQuery}`
+      return Router.replace(path, undefined, { shallow: true })
     }
   }
 }
 
-function getInitialRouteState (page, query = {}) {
-  let initialState = null
+function getRouteState () {
+  let initialState = {}
+  const query = Router.router.query
 
-  switch (page) {
-    case 'index': {
+  switch (Router.router.pathname) {
+    case '/': {
       initialState = Object.keys(routeInfo.index).reduce((acc, key) => {
         const info = routeInfo.index[key]
         const cur = query[key]
@@ -59,4 +61,4 @@ function getInitialRouteState (page, query = {}) {
   return initialState
 }
 
-export { getInitialRouteState, setRoute }
+export { getRouteState, setRoute }
