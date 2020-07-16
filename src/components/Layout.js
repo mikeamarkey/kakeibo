@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '1fr',
     gridTemplateRows: 'auto 1fr',
     height: '100%',
-    backgroundColor: theme.palette.background.level2
+    backgroundColor: theme.palette.background.gray
   },
   content: {
     overflowY: 'auto',
