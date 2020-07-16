@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     margin: `${theme.spacing(1)}px 0`,
     padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.level2
+    backgroundColor: theme.palette.background.gray
   },
   create: {
     textAlign: 'center'
