@@ -11,7 +11,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflowX: 'auto',
     width: '100%',
-    padding: theme.spacing(0.5),
+    '--safe-area-inset-bottom': 'env(safe-area-inset-bottom)',
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(0.5)}px calc(${theme.spacing(0.5)}px + var(--safe-area-inset-bottom))`,
     borderTop: `1px solid ${theme.palette.divider}`,
     background: theme.palette.common.white
   }
